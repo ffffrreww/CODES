@@ -1,969 +1,1447 @@
 package com.appsdevs.popit
 
-import android.content.pm.ActivityInfo
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose. animation.core. Animatable
-import androidx.compose.animation. core.EaseInOutSine
-import androidx.compose.animation.core. EaseOutBack
-import androidx.compose.animation.core. EaseOutCubic
-import androidx.compose.animation. core.EaseOutQuad
-import androidx.compose.animation.core. RepeatMode
-import androidx.compose.animation. core.animateFloat
-import androidx.compose.animation.core. animateIntAsState
-import androidx.compose.animation. core.infiniteRepeatable
-import androidx.compose. animation.core.rememberInfiniteTransition
-import androidx.compose. animation.core.spring
-import androidx.compose.animation.core. tween
+import androidx.compose.animation.core.EaseInOutSine
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation. Image
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx. compose.foundation.interaction.MutableInteractionSource
-import androidx.compose. foundation.layout. Arrangement
-import androidx. compose.foundation.layout.Box
-import androidx.compose.foundation. layout.BoxWithConstraints
-import androidx.compose.foundation. layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose. foundation.layout. Spacer
-import androidx.compose.foundation. layout.fillMaxSize
-import androidx.compose.foundation.layout. fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout. offset
-import androidx.compose.foundation.layout. padding
-import androidx. compose.foundation.layout.size
-import androidx.compose.foundation.layout. width
-import androidx. compose.foundation.shape.CircleShape
-import androidx.compose.foundation. shape.RoundedCornerShape
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Slider
-import androidx.compose. material3.SliderDefaults
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx. compose.runtime. Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx. compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime. getValue
-import androidx. compose.runtime.key
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx. compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime. mutableLongStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx. compose.runtime.mutableStateMapOf
-import androidx. compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime. rememberCoroutineScope
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose. ui.Alignment
-import androidx.compose. ui.Modifier
-import androidx.compose. ui.draw.alpha
-import androidx.compose.ui.draw. blur
-import androidx. compose.ui.draw.clip
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose. ui.graphics.Shadow
-import androidx.compose.ui.graphics. StrokeCap
-import androidx. compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui. input.pointer.changedToUp
-import androidx.compose.ui.input. pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx. compose.ui.platform.LocalContext
-import androidx.compose.ui.platform. LocalDensity
-import androidx.compose. ui.res.painterResource
-import androidx.compose. ui.text.TextStyle
-import androidx. compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit. Dp
-import androidx. compose.ui.unit.IntOffset
-import androidx. compose.ui.unit.TextUnit
-import androidx. compose.ui.unit.dp
-import androidx.compose.ui. unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window. DialogProperties
-import androidx. compose.ui.zIndex
-import androidx. core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import com.appsdevs.popit.ui.theme.PopITTheme
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx. coroutines.delay
-import kotlinx. coroutines.launch
-import java.util. Locale
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.roundToInt
-import kotlin.math.sin
-import kotlin.random.Random
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class BubbleKingActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+// ==================== BUBBLE CUSTOMIZATION SCREEN ====================
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+@Composable
+fun BubbleCustomizationScreen() {
+    val ctx = LocalContext.current
+    val ds = remember { DataStoreManager(ctx) }
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-        try {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val controller = WindowInsetsControllerCompat(window, window.decorView)
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat. BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        } catch (_: Exception) { }
+    val equippedBubbleFlow by ds.equippedBubbleFlow().collectAsState(initial = 0)
 
-        enableEdgeToEdge()
+    // Collect purchase states for all bubbles dynamically
+    val bubbleIds = listOf(1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30)
+    val purchasedStates = remember { mutableMapOf<Int, Boolean>() }
 
-        // Initialize music and sound
-        MusicController.initIfNeeded(applicationContext)
-        SoundManager.init(applicationContext)
-
-        setContent {
-            PopITTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    BubbleKingScreen(onExit = { finish() })
-                }
-            }
+    bubbleIds.forEach { id ->
+        val isPurchased by ds.isBubblePurchasedFlow(id).collectAsState(initial = false)
+        LaunchedEffect(isPurchased) {
+            purchasedStates[id] = isPurchased
         }
     }
 
-    override fun onDestroy() {
-        super. onDestroy()
-        // Stop game music and resume menu music when leaving
-        MusicController.stopGameMusic()
+    // Level 7 exclusive bubble (ID 10)
+    val isLevel7BubbleUnlocked by ds.isLevel7BubbleUnlockedFlow().collectAsState(initial = false)
+    LaunchedEffect(isLevel7BubbleUnlocked) {
+        if (isLevel7BubbleUnlocked) purchasedStates[10] = true
     }
-}
 
-// ==================== DATA CLASSES ====================
+    // Get current player level
+    val totalPops by ds.totalPopsFlow().collectAsState(initial = 0)
+    val currentLevel = ds.calculateLevelFromPops(totalPops)
 
-data class BKBubble(
-    val id: Int,
-    val x:  Dp,
-    val y: Dp,
-    val size:  Dp,
-    val lifespanMs: Long,
-    val spawnedAtMillis: Long = System.currentTimeMillis()
-)
+    var equippedBubbleLocal by remember { mutableIntStateOf(equippedBubbleFlow) }
+    LaunchedEffect(equippedBubbleFlow) { equippedBubbleLocal = equippedBubbleFlow }
 
-data class BKPopEffect(
-    val id: Int,
-    val x:  Dp,
-    val y: Dp,
-    val size:  Dp
-)
+    var selectedBubble by remember { mutableIntStateOf(if (equippedBubbleLocal > 0) equippedBubbleLocal else 0) }
+    LaunchedEffect(equippedBubbleLocal) {
+        if (selectedBubble == 0) selectedBubble = equippedBubbleLocal
+    }
 
-data class BKFloatingText(
-    val id:  Int,
-    val x: Dp,
-    val y:  Dp,
-    val text: String,
-    val color: Color,
-    val fontSize: TextUnit = 18.sp
-)
-
-data class BKParticle(
-    val id: Int,
-    val x:  Dp,
-    val y: Dp,
-    val angle: Float,
-    val speed: Float,
-    val color: Color,
-    val size: Dp
-)
-
-data class BKLuxEffect(
-    val id: Int,
-    val x:  Dp,
-    val y: Dp,
-    val size: Dp
-)
-
-// ==================== UTILITY COMPOSABLES ====================
-
-@Composable
-fun BKOutlinedText(
-    text: String,
-    fontSize: TextUnit,
-    modifier: Modifier = Modifier,
-    color: Color = Color. White,
-    fontWeight: FontWeight = FontWeight.Normal,
-    textAlign:  TextAlign?  = null,
-    shadowEnabled: Boolean = true
-) {
-    val shadowOffset = if (shadowEnabled) Offset(2f, 2f) else Offset.Zero
-    val shadowBlur = if (shadowEnabled) 4f else 0f
-
-    Text(
-        text = text,
-        fontSize = fontSize,
-        fontWeight = fontWeight,
-        color = color,
-        modifier = modifier,
-        textAlign = textAlign,
-        style = TextStyle(
-            shadow = Shadow(
-                color = Color.Black. copy(alpha = 0.7f),
-                offset = shadowOffset,
-                blurRadius = shadowBlur
-            )
-        )
-    )
-}
-
-@Composable
-fun BKAnimatedOutlinedText(
-    text: String,
-    fontSize: TextUnit,
-    modifier: Modifier = Modifier,
-    color: Color = Color. White,
-    fontWeight: FontWeight = FontWeight.Normal,
-    textAlign:  TextAlign? = null
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "textPulse")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, easing = EaseInOutSine),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "scale"
+    // Prices - ID 10 has no price (level unlock only)
+    val prices = mapOf(
+        1 to 500, 2 to 1500, 3 to 500, 4 to 500, 5 to 4000,
+        6 to 40, 7 to 60, 8 to 80,
+        10 to 0, // Level 7 unlock - no price
+        11 to 100, 12 to 100, 13 to 100, 14 to 80, 15 to 200,
+        16 to 100, 17 to 200, 18 to 80, 19 to 100, 20 to 80,
+        21 to 100, 22 to 80, 23 to 200, 24 to 100, 25 to 200,
+        26 to 200, 27 to 80, 28 to 80, 29 to 100, 30 to 200
     )
 
-    BKOutlinedText(
-        text = text,
-        color = color,
-        fontSize = fontSize,
-        fontWeight = fontWeight,
-        modifier = modifier. scale(scale),
-        textAlign = textAlign
-    )
-}
+    var showConfirm by remember { mutableStateOf(false) }
+    var pendingBuyId by remember { mutableIntStateOf(0) }
 
-@Composable
-fun BKDefaultGradientBackground() {
-    Box(
+    var showLevelLockDialog by remember { mutableStateOf(false) }
+    var levelLockTargetId by remember { mutableIntStateOf(0) }
+
+    fun isPurchased(id: Int): Boolean = purchasedStates[id] ?: false
+    fun setPurchased(id: Int, value: Boolean) {
+        purchasedStates[id] = value
+    }
+
+    fun isLevelLockedItem(id: Int): Boolean = id == 10 && !isLevel7BubbleUnlocked
+
+    BoxWithConstraints(
         modifier = Modifier
-            . fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460))
-                )
-            )
-    )
-}
-@Composable
-private fun GeneratedGameBackgroundPreview(id: Int, modifier: Modifier = Modifier) {
-    when (id) {
-        12 -> StarfieldBackground(modifier = modifier)
-        13 -> OceanWavesBackground(modifier = modifier)
-        14 -> ForestBackground(modifier = modifier)
-        15 -> AuroraBorealisBackground(modifier = modifier)
-        16 -> VolcanicBackground(modifier = modifier)
-        17 -> CyberpunkCityBackground(modifier = modifier)
-        18 -> UnderwaterBackground(modifier = modifier)
-        19 -> DesertDunesBackground(modifier = modifier)
-        20 -> CandyLandBackground(modifier = modifier)
-        21 -> RetroGridBackground(modifier = modifier)
-    }
-}
-// ==================== BUBBLE VIEW ====================
-
-@Composable
-fun BKBubbleView(
-    bubble: BKBubble,
-    bubblePainter: androidx.compose.ui. graphics.painter. Painter,
-    modifier: Modifier = Modifier
-) {
-    val spawnScale = remember { Animatable(0f) }
-    val wobble = remember { Animatable(0f) }
-
-    LaunchedEffect(bubble.id) {
-        launch {
-            spawnScale.animateTo(1f, spring(dampingRatio = 0.5f, stiffness = 300f))
-        }
-        launch {
-            wobble.animateTo(
-                1f,
-                infiniteRepeatable(
-                    animation = tween(1500, easing = EaseInOutSine),
-                    repeatMode = RepeatMode.Reverse
-                )
-            )
-        }
-    }
-
-    val wobbleOffset = (wobble.value - 0.5f) * 4f
-
-    Image(
-        painter = bubblePainter,
-        contentDescription = "bubble",
-        modifier = modifier
-            .size(bubble.size)
-            .offset { IntOffset(bubble.x.roundToPx(), (bubble.y + wobbleOffset. dp).roundToPx()) }
-            .scale(spawnScale.value)
-            .graphicsLayer { rotationZ = wobbleOffset * 2f }
-    )
-}
-
-// ==================== POP EFFECT VIEW ====================
-
-@Composable
-fun BKPopEffectView(effect: BKPopEffect, onFinished: () -> Unit) {
-    val scale = remember { Animatable(0.5f) }
-    val alpha = remember { Animatable(1f) }
-    val innerScale = remember { Animatable(0.3f) }
-
-    LaunchedEffect(effect.id) {
-        launch { scale.animateTo(1.8f, tween(250, easing = EaseOutCubic)) }
-        launch { innerScale.animateTo(1.2f, tween(200, easing = EaseOutQuad)) }
-        launch {
-            delay(100)
-            alpha.animateTo(0f, tween(150, easing = EaseOutCubic))
-        }
-        delay(260)
-        onFinished()
-    }
-
-    Box(
-        modifier = Modifier
-            .size(effect.size)
-            .offset { IntOffset(effect.x.roundToPx(), effect.y.roundToPx()) },
-        contentAlignment = Alignment. Center
-    ) {
-        Canvas(
-            modifier = Modifier
-                . fillMaxSize()
-                .scale(scale.value)
-                .alpha(alpha.value)
-        ) {
-            drawCircle(
-                color = Color.White,
-                radius = size.minDimension / 2f,
-                style = Stroke(width = 6f)
-            )
-        }
-
-        Canvas(
-            modifier = Modifier
-                . fillMaxSize()
-                .scale(innerScale.value)
-                .alpha(alpha.value * 0.6f)
-        ) {
-            drawCircle(
-                color = Color(0xFFFFD700),
-                radius = size.minDimension / 3f
-            )
-        }
-    }
-}
-
-// ==================== PARTICLE VIEW ====================
-
-@Composable
-fun BKParticleView(particle: BKParticle) {
-    val progress = remember { Animatable(0f) }
-    var visible by remember { mutableStateOf(true) }
-
-    LaunchedEffect(particle.id) {
-        progress.animateTo(1f, tween(400, easing = EaseOutCubic))
-        visible = false
-    }
-
-    if (visible) {
-        val offsetX = (cos(particle.angle. toDouble()) * particle.speed * progress. value * 50).toFloat()
-        val offsetY = (sin(particle.angle.toDouble()) * particle.speed * progress.value * 50).toFloat()
-
-        Box(
-            modifier = Modifier
-                . offset { IntOffset((particle.x + offsetX. dp).roundToPx(), (particle.y + offsetY.dp).roundToPx()) }
-                . size(particle.size * (1f - progress.value * 0.5f))
-                .alpha(1f - progress.value)
-                .background(particle.color, CircleShape)
-        )
-    }
-}
-
-// ==================== LUX EFFECT VIEW ====================
-
-@Composable
-fun BKLuxEffectView(effect: BKLuxEffect, onFinished: () -> Unit) {
-    val translateY = remember { Animatable(0f) }
-    val alpha = remember { Animatable(1f) }
-    val scaleAnim = remember { Animatable(0.5f) }
-    val rotation = remember { Animatable(0f) }
-
-    LaunchedEffect(effect. id) {
-        // Play lux drop sound
-        SoundManager.playLuxDrop()
-
-        launch { scaleAnim.animateTo(1.2f, spring(dampingRatio = 0.4f, stiffness = 300f)) }
-        launch { translateY.animateTo(-40f, tween(600, easing = EaseOutCubic)) }
-        launch { rotation.animateTo(10f, tween(300)) }
-        launch {
-            delay(300)
-            alpha.animateTo(0f, tween(300))
-        }
-        delay(620)
-        onFinished()
-    }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .offset { IntOffset(effect.x.roundToPx(), (effect.y + translateY.value. dp).roundToPx()) }
-            .alpha(alpha.value)
-            .scale(scaleAnim. value)
-            .graphicsLayer { rotationZ = rotation.value }
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.gemgame),
-            contentDescription = "lux",
-            modifier = Modifier.size((effect.size. value * 0.55f).dp)
-        )
-        BKOutlinedText(
-            text = "+1 LUX",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color(0xFFFFD700),
-            textAlign = TextAlign. Center
-        )
-    }
-}
-
-// ==================== FLOATING TEXT EFFECT ====================
-
-@Composable
-fun BKFloatingTextEffect(floatingText: BKFloatingText, onFinished: () -> Unit) {
-    val alpha = remember { Animatable(1f) }
-    val offsetY = remember { Animatable(0f) }
-    val scale = remember { Animatable(1.2f) }
-
-    LaunchedEffect(floatingText. id) {
-        launch { scale.animateTo(1f, spring(dampingRatio = 0.5f)) }
-        launch { offsetY.animateTo(-50f, tween(800, easing = EaseOutCubic)) }
-        launch {
-            delay(400)
-            alpha.animateTo(0f, tween(400))
-        }
-        delay(820)
-        onFinished()
-    }
-
-    BKOutlinedText(
-        text = floatingText.text,
-        fontSize = floatingText.fontSize,
-        fontWeight = FontWeight.Bold,
-        color = floatingText.color,
-        modifier = Modifier
-            .offset { IntOffset(floatingText.x.roundToPx(), (floatingText.y + offsetY.value.dp).roundToPx()) }
-            .alpha(alpha.value)
-            .scale(scale. value)
-    )
-}
-
-// ==================== DIFFICULTY INDICATOR ====================
-
-@Composable
-fun BKDifficultyCenterIndicator(
-    text: String,
-    visible: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val alpha = remember { Animatable(0f) }
-    val scale = remember { Animatable(0.8f) }
-    val offsetY = remember { Animatable(20f) }
-
-    LaunchedEffect(key1 = visible, key2 = text) {
-        if (visible) {
-            // Play difficulty sound
-            SoundManager.playDifficulty()
-
-            alpha.snapTo(0f)
-            scale.snapTo(0.8f)
-            offsetY.snapTo(20f)
-
-            launch { alpha.animateTo(1f, tween(150, easing = EaseOutBack)) }
-            launch { scale.animateTo(1f, tween(200, easing = EaseOutBack)) }
-            launch { offsetY.animateTo(0f, tween(200, easing = EaseOutCubic)) }
-
-            delay(800L)
-
-            launch { alpha.animateTo(0f, tween(200)) }
-            launch { scale.animateTo(1.1f, tween(200)) }
-        } else {
-            alpha.snapTo(0f)
-        }
-    }
-
-    if (alpha.value > 0f) {
-        Box(
-            modifier = modifier
-                .offset { IntOffset(0, offsetY.value. dp.roundToPx()) }
-                .alpha(alpha.value)
-                .scale(scale.value)
-                .padding(vertical = 6.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Card(
-                colors = CardDefaults. cardColors(
-                    containerColor = Color(0xFF1A1A2E).copy(alpha = 0.9f)
-                ),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp, vertical = 12.dp)
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFFFFD700).copy(alpha = 0.1f),
-                                    Color. Transparent,
-                                    Color(0xFFFFD700).copy(alpha = 0.1f)
-                                )
-                            )
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    BKOutlinedText(
-                        text = "⚡",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFFD700)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    BKOutlinedText(
-                        text = text,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFFD700),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-    }
-}
-
-// ==================== TOP BAR ====================
-
-@Composable
-fun BKTopBar(
-    points: Int,
-    targetScore: Int,
-    elapsedSeconds: Int,
-    modifier: Modifier = Modifier
-) {
-    val pointsAnimated by animateIntAsState(
-        targetValue = points,
-        animationSpec = tween(300, easing = EaseOutCubic),
-        label = "pointsAnim"
-    )
-
-    val progress = (points.toFloat() / targetScore.toFloat()).coerceIn(0f, 1f)
-
-    Box(
-        modifier = modifier
             .fillMaxWidth()
-            .padding(top = 12.dp, start = 16.dp, end = 16.dp)
+            .padding(12.dp)
     ) {
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Card(
-                    colors = CardDefaults. cardColors(
-                        containerColor = Color(0xFF1A1A2E).copy(alpha = 0.85f)
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier. padding(horizontal = 16.dp, vertical = 10.dp),
-                        verticalAlignment = Alignment. CenterVertically
-                    ) {
-                        BKOutlinedText(
-                            text = "👑",
-                            fontSize = 18.sp,
-                            color = Color(0xFFFFD700)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        BKOutlinedText(
-                            text = "$pointsAnimated / $targetScore",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight. Bold,
-                            color = Color. White
-                        )
-                    }
-                }
+        val isWide = maxWidth > 760.dp
 
-                Card(
-                    colors = CardDefaults. cardColors(
-                        containerColor = Color(0xFF1A1A2E).copy(alpha = 0.85f)
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                        verticalAlignment = Alignment. CenterVertically
-                    ) {
-                        BKOutlinedText(
-                            text = "⏱️",
-                            fontSize = 18.sp,
-                            color = Color(0xFF00BFFF)
-                        )
-                        Spacer(modifier = Modifier. width(8.dp))
-                        BKOutlinedText(
-                            text = formatTimeBK(elapsedSeconds),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color. White
-                        )
-                    }
-                }
-            }
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Header
+            Text(
+                text = "🫧 BUBBLE SHOP",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color. White,
+                style = TextStyle(
+                    shadow = Shadow(
+                        color = Color.Black. copy(alpha = 0.5f),
+                        offset = Offset(2f, 2f),
+                        blurRadius = 4f
+                    )
+                )
+            )
 
-            Spacer(modifier = Modifier. height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1A1A2E).copy(alpha = 0.7f)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier. padding(horizontal = 12.dp, vertical = 8.dp)
+            if (isWide) {
+                Row(
+                    modifier = Modifier. fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement. SpaceBetween
-                    ) {
-                        BKOutlinedText(
-                            text = "Progress to Victory",
-                            fontSize = 12.sp,
-                            color = Color. White. copy(alpha = 0.7f)
-                        )
-                        BKOutlinedText(
-                            text = "${(progress * 100).roundToInt()}%",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight. Bold,
-                            color = Color(0xFFFFD700)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    LinearProgressIndicator(
-                        progress = { progress },
+                    Card(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp)),
-                        color = Color(0xFFFFD700),
-                        trackColor = Color. White.copy(alpha = 0.2f),
-                        strokeCap = StrokeCap.Round
-                    )
-                }
-            }
-        }
-    }
-}
-
-fun formatTimeBK(seconds: Int): String {
-    val minutes = seconds / 60
-    val secs = seconds % 60
-    return if (minutes > 0) {
-        String.format(Locale.US, "%d:%02d", minutes, secs)
-    } else {
-        "${secs}s"
-    }
-}
-
-// ==================== COUNTDOWN OVERLAY ====================
-
-@Composable
-fun BKCountdownOverlay(countdownValue: Int, showPlayLabel: Boolean) {
-    val scale = remember { Animatable(0.5f) }
-    val alpha = remember { Animatable(0f) }
-    val rotation = remember { Animatable(-30f) }
-
-    LaunchedEffect(countdownValue, showPlayLabel) {
-        // Play countdown or go sound
-        if (showPlayLabel) {
-            SoundManager.playGo()
-        } else {
-            SoundManager.playCountdown()
-        }
-
-        scale.snapTo(0.5f)
-        alpha.snapTo(0f)
-        rotation.snapTo(-30f)
-
-        launch { scale.animateTo(1.2f, spring(dampingRatio = 0.4f, stiffness = 400f)) }
-        launch { alpha.animateTo(1f, tween(150)) }
-        launch { rotation.animateTo(0f, spring(dampingRatio = 0.5f)) }
-
-        delay(700)
-        launch { alpha.animateTo(0f, tween(250)) }
-        launch { scale.animateTo(1.5f, tween(250)) }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xCC000000))
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val ev = awaitPointerEvent()
-                        ev.changes.forEach { it.consume() }
+                            .weight(0.55f)
+                            .height(580.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF1A1A2E).copy(alpha = 0.9f)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        BubblePreviewPanel(
+                            selectedBubble = selectedBubble,
+                            selectedName = getBubbleName(selectedBubble),
+                            isPurchased = isPurchased(selectedBubble),
+                            isEquipped = equippedBubbleLocal == selectedBubble,
+                            price = prices[selectedBubble] ?: 0,
+                            isLevelLocked = isLevelLockedItem(selectedBubble),
+                            requiredLevel = if (selectedBubble == 10) 7 else 0,
+                            currentLevel = currentLevel,
+                            onBuyOrEquip = {
+                                if (selectedBubble == 10) {
+                                    if (isLevel7BubbleUnlocked) {
+                                        handleBuyOrEquip(
+                                            selectedBubble = selectedBubble,
+                                            isPurchased = isPurchased(selectedBubble),
+                                            isEquipped = equippedBubbleLocal == selectedBubble,
+                                            onEquip = { id ->
+                                                equippedBubbleLocal = id
+                                                coroutineScope.launch {
+                                                    withContext(Dispatchers.IO) { ds.equipBubble(id) }
+                                                    snackbarHostState.showSnackbar("✅ Equipped!")
+                                                }
+                                            },
+                                            onUnequip = {
+                                                equippedBubbleLocal = 0
+                                                coroutineScope.launch {
+                                                    withContext(Dispatchers.IO) { ds.equipBubble(0) }
+                                                    snackbarHostState.showSnackbar("Unequipped")
+                                                }
+                                            },
+                                            onBuy = { },
+                                            onNoSelection = { }
+                                        )
+                                    } else {
+                                        levelLockTargetId = 10
+                                        showLevelLockDialog = true
+                                    }
+                                } else {
+                                    handleBuyOrEquip(
+                                        selectedBubble = selectedBubble,
+                                        isPurchased = isPurchased(selectedBubble),
+                                        isEquipped = equippedBubbleLocal == selectedBubble,
+                                        onEquip = { id ->
+                                            equippedBubbleLocal = id
+                                            coroutineScope.launch {
+                                                withContext(Dispatchers.IO) { ds.equipBubble(id) }
+                                                snackbarHostState.showSnackbar("✅ Equipped!")
+                                            }
+                                        },
+                                        onUnequip = {
+                                            equippedBubbleLocal = 0
+                                            coroutineScope.launch {
+                                                withContext(Dispatchers.IO) { ds.equipBubble(0) }
+                                                snackbarHostState.showSnackbar("Unequipped")
+                                            }
+                                        },
+                                        onBuy = { id ->
+                                            pendingBuyId = id
+                                            showConfirm = true
+                                        },
+                                        onNoSelection = {
+                                            coroutineScope.launch {
+                                                snackbarHostState. showSnackbar("Select a bubble first")
+                                            }
+                                        }
+                                    )
+                                }
+                            },
+                            onReset = {
+                                coroutineScope. launch {
+                                    selectedBubble = 0
+                                    equippedBubbleLocal = 0
+                                    withContext(Dispatchers.IO) { ds.resetBubbleToDefault() }
+                                    snackbarHostState.showSnackbar("🔄 Reset to default")
+                                }
+                            }
+                        )
                     }
-                }
-            },
-        contentAlignment = Alignment. Center
-    ) {
-        Box(
-            modifier = Modifier
-                . scale(scale.value)
-                .alpha(alpha.value)
-                .graphicsLayer { rotationZ = rotation.value }
-        ) {
-            if (! showPlayLabel) {
-                Box(contentAlignment = Alignment. Center) {
-                    BKOutlinedText(
-                        text = countdownValue.toString(),
-                        fontSize = 150.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFFFFD700).copy(alpha = 0.3f),
+
+                    Card(
                         modifier = Modifier
-                            .blur(24.dp)
-                            .scale(1.2f)
-                    )
-                    BKOutlinedText(
-                        text = countdownValue.toString(),
-                        fontSize = 140.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color. White
-                    )
+                            .weight(0.45f)
+                            .height(580.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF1A1A2E).copy(alpha = 0.9f)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        BubbleSelectorPanel(
+                            equippedBubble = equippedBubbleLocal,
+                            selectedBubble = selectedBubble,
+                            onSelect = { selectedBubble = it },
+                            onQuickBuy = { id ->
+                                if (id == 10) {
+                                    levelLockTargetId = 10
+                                    showLevelLockDialog = true
+                                } else {
+                                    pendingBuyId = id
+                                    showConfirm = true
+                                }
+                            },
+                            isPurchasedProvider = { isPurchased(it) },
+                            prices = prices,
+                            isLevel7BubbleUnlocked = isLevel7BubbleUnlocked,
+                            currentLevel = currentLevel
+                        )
+                    }
                 }
             } else {
-                Box(contentAlignment = Alignment. Center) {
-                    BKOutlinedText(
-                        text = "PLAY! ",
-                        fontSize = 100.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFFFFD700).copy(alpha = 0.3f),
-                        modifier = Modifier
-                            .blur(24.dp)
-                            .scale(1.2f)
-                    )
-                    BKOutlinedText(
-                        text = "PLAY!",
-                        fontSize = 90.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFFFFD700)
-                    )
-                }
-            }
-        }
-    }
-}
-
-// ==================== IN-GAME SETTINGS DIALOG ====================
-
-@Composable
-fun BKInGameSettingsDialog(
-    onDismiss: () -> Unit,
-    onResume: () -> Unit,
-    onExit: () -> Unit,
-    musicVolume: Float,
-    onMusicVolumeChange: (Float) -> Unit,
-    sfxVolume:  Float,
-    onSfxVolumeChange: (Float) -> Unit
-) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { },
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1A1A2E)
-            ),
-            elevation = CardDefaults. cardElevation(defaultElevation = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0xFF2A1A4A),
-                                Color(0xFF1A1A2E)
-                            )
-                        )
-                    )
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                BKOutlinedText(
-                    text = "⏸️ Paused",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color. White
-                )
-
-                Spacer(modifier = Modifier. height(24.dp))
-
-                // Music Volume
+                // Phone layout
                 Card(
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        . height(420.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF0F0F1A).copy(alpha = 0.8f)
+                        containerColor = Color(0xFF1A1A2E).copy(alpha = 0.9f)
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    elevation = CardDefaults. cardElevation(defaultElevation = 8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment. CenterVertically
-                        ) {
-                            BKOutlinedText(
-                                text = "🎵 Music",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color. White
-                            )
-                            BKOutlinedText(
-                                text = "${(musicVolume * 100).toInt()}%",
-                                fontSize = 14.sp,
-                                color = Color(0xFFFF6D00)
-                            )
+                    BubblePreviewPanel(
+                        selectedBubble = selectedBubble,
+                        selectedName = getBubbleName(selectedBubble),
+                        isPurchased = isPurchased(selectedBubble),
+                        isEquipped = equippedBubbleLocal == selectedBubble,
+                        price = prices[selectedBubble] ?: 0,
+                        isLevelLocked = isLevelLockedItem(selectedBubble),
+                        requiredLevel = if (selectedBubble == 10) 7 else 0,
+                        currentLevel = currentLevel,
+                        onBuyOrEquip = {
+                            if (selectedBubble == 10) {
+                                if (isLevel7BubbleUnlocked) {
+                                    handleBuyOrEquip(
+                                        selectedBubble = selectedBubble,
+                                        isPurchased = isPurchased(selectedBubble),
+                                        isEquipped = equippedBubbleLocal == selectedBubble,
+                                        onEquip = { id ->
+                                            equippedBubbleLocal = id
+                                            coroutineScope.launch {
+                                                withContext(Dispatchers. IO) { ds.equipBubble(id) }
+                                                snackbarHostState.showSnackbar("✅ Equipped!")
+                                            }
+                                        },
+                                        onUnequip = {
+                                            equippedBubbleLocal = 0
+                                            coroutineScope.launch {
+                                                withContext(Dispatchers. IO) { ds.equipBubble(0) }
+                                                snackbarHostState.showSnackbar("Unequipped")
+                                            }
+                                        },
+                                        onBuy = { },
+                                        onNoSelection = { }
+                                    )
+                                } else {
+                                    levelLockTargetId = 10
+                                    showLevelLockDialog = true
+                                }
+                            } else {
+                                handleBuyOrEquip(
+                                    selectedBubble = selectedBubble,
+                                    isPurchased = isPurchased(selectedBubble),
+                                    isEquipped = equippedBubbleLocal == selectedBubble,
+                                    onEquip = { id ->
+                                        equippedBubbleLocal = id
+                                        coroutineScope.launch {
+                                            withContext(Dispatchers.IO) { ds.equipBubble(id) }
+                                            snackbarHostState. showSnackbar("✅ Equipped!")
+                                        }
+                                    },
+                                    onUnequip = {
+                                        equippedBubbleLocal = 0
+                                        coroutineScope.launch {
+                                            withContext(Dispatchers.IO) { ds.equipBubble(0) }
+                                            snackbarHostState. showSnackbar("Unequipped")
+                                        }
+                                    },
+                                    onBuy = { id ->
+                                        pendingBuyId = id
+                                        showConfirm = true
+                                    },
+                                    onNoSelection = {
+                                        coroutineScope. launch {
+                                            snackbarHostState.showSnackbar("Select a bubble first")
+                                        }
+                                    }
+                                )
+                            }
+                        },
+                        onReset = {
+                            coroutineScope. launch {
+                                selectedBubble = 0
+                                equippedBubbleLocal = 0
+                                withContext(Dispatchers. IO) { ds.resetBubbleToDefault() }
+                                snackbarHostState.showSnackbar("🔄 Reset to default")
+                            }
                         }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Slider(
-                            value = musicVolume,
-                            onValueChange = onMusicVolumeChange,
-                            valueRange = 0f..1f,
-                            steps = 9,
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = SliderDefaults. colors(
-                                thumbColor = Color(0xFFFF6D00),
-                                activeTrackColor = Color(0xFFFF6D00),
-                                inactiveTrackColor = Color. White.copy(alpha = 0.3f)
-                            )
-                        )
-                    }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // SFX Volume
                 Card(
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(340.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF0F0F1A).copy(alpha = 0.8f)
+                        containerColor = Color(0xFF1A1A2E).copy(alpha = 0.9f)
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier. padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement. SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            BKOutlinedText(
-                                text = "🔊 Sound Effects",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight. Bold,
-                                color = Color.White
-                            )
-                            BKOutlinedText(
-                                text = "${(sfxVolume * 100).toInt()}%",
-                                fontSize = 14.sp,
-                                color = Color(0xFF4CAF50)
-                            )
+                    BubbleSelectorPanel(
+                        equippedBubble = equippedBubbleLocal,
+                        selectedBubble = selectedBubble,
+                        onSelect = { selectedBubble = it },
+                        onQuickBuy = { id ->
+                            if (id == 10) {
+                                levelLockTargetId = 10
+                                showLevelLockDialog = true
+                            } else {
+                                pendingBuyId = id
+                                showConfirm = true
+                            }
+                        },
+                        isPurchasedProvider = { isPurchased(it) },
+                        prices = prices,
+                        isLevel7BubbleUnlocked = isLevel7BubbleUnlocked,
+                        currentLevel = currentLevel
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(modifier = Modifier.fillMaxWidth()) {
+                SnackbarHost(hostState = snackbarHostState)
+            }
+        }
+    }
+
+    // Purchase Dialog (for buyable items)
+    if (showConfirm && pendingBuyId != 0 && pendingBuyId != 10) {
+        BubblePurchaseDialog(
+            bubbleId = pendingBuyId,
+            bubbleName = getBubbleName(pendingBuyId),
+            price = prices[pendingBuyId] ?: 0,
+            isLuxPriced = pendingBuyId >= 6,
+            onConfirm = {
+                val id = pendingBuyId
+                val isLuxPriced = id >= 6
+                val price = prices[id] ?: 0
+
+                setPurchased(id, true)
+                equippedBubbleLocal = id
+                selectedBubble = id
+                showConfirm = false
+
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val ok = if (isLuxPriced) {
+                                ds.buyBubbleWithLux(id, price)
+                            } else {
+                                ds.buyBubble(id, price)
+                            }
+                            if (ok) {
+                                snackbarHostState.showSnackbar("🎉 Purchased!")
+                            } else {
+                                val actualPurchased = ds.isBubblePurchasedFlow(id).first()
+                                val actualEquipped = ds.equippedBubbleFlow().first()
+                                setPurchased(id, actualPurchased)
+                                equippedBubbleLocal = actualEquipped
+                                snackbarHostState. showSnackbar("❌ Not enough resources")
+                            }
+                        } catch (e: Exception) {
+                            val actualPurchased = ds.isBubblePurchasedFlow(id).first()
+                            val actualEquipped = ds.equippedBubbleFlow().first()
+                            setPurchased(id, actualPurchased)
+                            equippedBubbleLocal = actualEquipped
+                            snackbarHostState.showSnackbar("Error:  ${e.localizedMessage ?: "unknown"}")
                         }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Slider(
-                            value = sfxVolume,
-                            onValueChange = onSfxVolumeChange,
-                            valueRange = 0f..1f,
-                            steps = 9,
-                            modifier = Modifier. fillMaxWidth(),
-                            colors = SliderDefaults.colors(
-                                thumbColor = Color(0xFF4CAF50),
-                                activeTrackColor = Color(0xFF4CAF50),
-                                inactiveTrackColor = Color. White.copy(alpha = 0.3f)
-                            )
+                    }
+                }
+            },
+            onDismiss = { showConfirm = false }
+        )
+    }
+
+    // Level Lock Dialog
+    if (showLevelLockDialog) {
+        BubbleLevelLockDialog(
+            requiredLevel = 7,
+            currentLevel = currentLevel,
+            itemName = getBubbleName(levelLockTargetId),
+            onDismiss = { showLevelLockDialog = false }
+        )
+    }
+}
+
+// ==================== HELPER FUNCTIONS ====================
+
+private fun getBubbleName(id: Int): String = when (id) {
+    1 -> "Golden Bubble"
+    2 -> "Rainbow Bubble"
+    3 -> "Green Bubble"
+    4 -> "Pink Bubble"
+    5 -> "Cyberpunk Bubble"
+    6 -> "Ocean Bubble"
+    7 -> "Anime Bubble"
+    8 -> "Space Bubble"
+    10 -> "🌟 Level 7 Exclusive"
+    11 -> "Fire Bubble"
+    12 -> "Ice Bubble"
+    13 -> "Electric Bubble"
+    14 -> "Nature Bubble"
+    15 -> "Galaxy Bubble"
+    16 -> "Lava Bubble"
+    17 -> "Crystal Bubble"
+    18 -> "Sunset Bubble"
+    19 -> "Midnight Bubble"
+    20 -> "Cherry Blossom Bubble"
+    21 -> "Toxic Bubble"
+    22 -> "Water Bubble"
+    23 -> "Diamond Bubble"
+    24 -> "Neon Bubble"
+    25 -> "Aurora Bubble"
+    26 -> "Rainbow Swirl Bubble"
+    27 -> "Smoke Bubble"
+    28 -> "Candy Bubble"
+    29 -> "Metal Bubble"
+    30 -> "Plasma Bubble"
+    else -> "Default Bubble"
+}
+
+private fun getBubbleDrawable(id: Int): Int = when (id) {
+    1 -> R.drawable.goldenbubble
+    2 -> R.drawable.rainbowbubble
+    3 -> R.drawable.greenbubble
+    4 -> R.drawable.pinkbubble
+    5 -> R.drawable.cyberpunkbubble
+    6 -> R.drawable.oceanbubble
+    7 -> R. drawable.animebubble1
+    8 -> R.drawable.spacebubble
+    10 -> R.drawable.levelbubble // Level 7 exclusive bubble
+    else -> R.drawable.bubble
+}
+
+private fun getBubbleRarity(id: Int): BubbleRarity = when (id) {
+    1 -> BubbleRarity.RARE
+    2 -> BubbleRarity.LEGENDARY
+    3 -> BubbleRarity.COMMON
+    4 -> BubbleRarity.COMMON
+    5 -> BubbleRarity.LEGENDARY
+    6 -> BubbleRarity.RARE
+    7 -> BubbleRarity.EPIC
+    8 -> BubbleRarity.EPIC
+    10 -> BubbleRarity.EXCLUSIVE
+    11 -> BubbleRarity.EPIC
+    12 -> BubbleRarity.EPIC
+    13 -> BubbleRarity.EPIC
+    14 -> BubbleRarity.RARE
+    15 -> BubbleRarity.LEGENDARY
+    16 -> BubbleRarity.EPIC
+    17 -> BubbleRarity.LEGENDARY
+    18 -> BubbleRarity.RARE
+    19 -> BubbleRarity.EPIC
+    20 -> BubbleRarity.RARE
+    21 -> BubbleRarity.EPIC
+    22 -> BubbleRarity.RARE
+    23 -> BubbleRarity.LEGENDARY
+    24 -> BubbleRarity.EPIC
+    25 -> BubbleRarity.LEGENDARY
+    26 -> BubbleRarity.LEGENDARY
+    27 -> BubbleRarity.RARE
+    28 -> BubbleRarity.RARE
+    29 -> BubbleRarity.EPIC
+    30 -> BubbleRarity.LEGENDARY
+    else -> BubbleRarity.COMMON
+}
+
+// Helper to check if bubble is code-generated (vs drawable)
+private fun isGeneratedBubble(id: Int): Boolean = id in 11..30
+
+// Get composable for generated bubbles
+@Composable
+private fun GetGeneratedBubble(id: Int, modifier: Modifier = Modifier) {
+    when (id) {
+        11 -> FireBubble(modifier)
+        12 -> IceBubble(modifier)
+        13 -> ElectricBubble(modifier)
+        14 -> NatureBubble(modifier)
+        15 -> GalaxyBubble(modifier)
+        16 -> LavaBubble(modifier)
+        17 -> CrystalBubble(modifier)
+        18 -> SunsetBubble(modifier)
+        19 -> MidnightBubble(modifier)
+        20 -> CherryBlossomBubble(modifier)
+        21 -> ToxicBubble(modifier)
+        22 -> WaterBubble(modifier)
+        23 -> DiamondBubble(modifier)
+        24 -> NeonBubble(modifier)
+        25 -> AuroraBubble(modifier)
+        26 -> RainbowSwirlBubble(modifier)
+        27 -> SmokeBubble(modifier)
+        28 -> CandyBubble(modifier)
+        29 -> MetalBubble(modifier)
+        30 -> PlasmaBubble(modifier)
+    }
+}
+
+private enum class BubbleRarity(val color: Color, val label: String) {
+    COMMON(Color(0xFF9E9E9E), "Common"),
+    RARE(Color(0xFF2196F3), "Rare"),
+    EPIC(Color(0xFF9C27B0), "Epic"),
+    LEGENDARY(Color(0xFFFFD700), "Legendary"),
+    EXCLUSIVE(Color(0xFF00E676), "Exclusive")
+}
+
+private fun handleBuyOrEquip(
+    selectedBubble: Int,
+    isPurchased: Boolean,
+    isEquipped:  Boolean,
+    onEquip: (Int) -> Unit,
+    onUnequip: () -> Unit,
+    onBuy: (Int) -> Unit,
+    onNoSelection: () -> Unit
+) {
+    when {
+        selectedBubble == 0 -> onNoSelection()
+        !isPurchased -> onBuy(selectedBubble)
+        isEquipped -> onUnequip()
+        else -> onEquip(selectedBubble)
+    }
+}
+
+// ==================== STYLED TEXT ====================
+
+@Composable
+private fun BubbleStyledText(
+    text: String,
+    fontSize: Int = 16,
+    fontWeight:  FontWeight = FontWeight.Normal,
+    color:  Color = Color.White,
+    modifier:  Modifier = Modifier
+) {
+    Text(
+        text = text,
+        fontSize = fontSize. sp,
+        fontWeight = fontWeight,
+        color = color,
+        modifier = modifier,
+        style = TextStyle(
+            shadow = Shadow(
+                color = Color.Black.copy(alpha = 0.6f),
+                offset = Offset(1f, 1f),
+                blurRadius = 2f
+            )
+        )
+    )
+}
+// ==================== PREVIEW PANEL ====================
+
+@Composable
+private fun BubblePreviewPanel(
+    selectedBubble: Int,
+    selectedName: String,
+    isPurchased: Boolean,
+    isEquipped: Boolean,
+    price: Int,
+    isLevelLocked: Boolean = false,
+    requiredLevel: Int = 0,
+    currentLevel: Int = 1,
+    onBuyOrEquip: () -> Unit,
+    onReset: () -> Unit
+) {
+    val rarity = getBubbleRarity(selectedBubble)
+    val infiniteTransition = rememberInfiniteTransition(label = "bubbleFloat")
+
+    val floatOffset by infiniteTransition.animateFloat(
+        initialValue = -6f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "float"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF2A1A4A).copy(alpha = 0.5f),
+                        Color(0xFF1A1A2E)
+                    )
+                )
+            )
+            .padding(16.dp)
+    ) {
+        // Header
+        Row(
+            modifier = Modifier. fillMaxWidth(),
+            horizontalArrangement = Arrangement. SpaceBetween,
+            verticalAlignment = Alignment. CenterVertically
+        ) {
+            Column {
+                BubbleStyledText(
+                    text = "✨ Preview",
+                    fontSize = 12,
+                    color = Color.White. copy(alpha = 0.7f)
+                )
+                BubbleStyledText(
+                    text = selectedName,
+                    fontSize = 18,
+                    fontWeight = FontWeight. Bold
+                )
+            }
+
+            if (selectedBubble > 0) {
+                RarityBadge(rarity = rarity)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Preview Box
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    brush = Brush. radialGradient(
+                        colors = listOf(
+                            rarity.color. copy(alpha = 0.15f),
+                            Color(0xFF0A0A15).copy(alpha = 0.8f)
+                        )
+                    )
+                )
+                .border(
+                    width = 2.dp,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            rarity.color.copy(alpha = 0.5f),
+                            rarity.color.copy(alpha = 0.2f)
+                        )
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            BubbleParticlesBackground(rarityColor = rarity.color)
+
+            // Display generated bubble or drawable
+            if (isGeneratedBubble(selectedBubble)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                        .graphicsLayer {
+                            translationY = floatOffset
+                        }
+                        .alpha(if (isLevelLocked) 0.5f else 1f)
+                ) {
+                    GetGeneratedBubble(id = selectedBubble)
+                }
+            } else {
+                val drawable = getBubbleDrawable(selectedBubble)
+                Image(
+                    painter = painterResource(id = drawable),
+                    contentDescription = "bubble_preview",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                        .graphicsLayer {
+                            translationY = floatOffset
+                        }
+                        .alpha(if (isLevelLocked) 0.5f else 1f),
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            // Level lock overlay
+            if (isLevelLocked) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        . background(Color. Black.copy(alpha = 0.6f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "🔒", fontSize = 48. sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        BubbleStyledText(
+                            text = "Reach Level $requiredLevel",
+                            fontSize = 16,
+                            fontWeight = FontWeight. Bold,
+                            color = Color(0xFFFFD700)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        BubbleStyledText(
+                            text = "Current:  Level $currentLevel",
+                            fontSize = 12,
+                            color = Color. White.copy(alpha = 0.7f)
                         )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Resume Button
-                Button(
-                    onClick = onResume,
+            // Equipped badge
+            if (isEquipped && ! isLevelLocked) {
+                Box(
                     modifier = Modifier
-                        . fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4CAF50)
-                    )
+                        .align(Alignment.TopEnd)
+                        . padding(8.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF4CAF50))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    BKOutlinedText(
-                        text = "▶ Resume",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
+                    Text(
+                        text = "✓ EQUIPPED",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight. Bold,
                         color = Color.White
                     )
                 }
+            }
+        }
 
-                Spacer(modifier = Modifier. height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-                // Exit Button
-                Button(
-                    onClick = onExit,
+        // Status Info
+        if (selectedBubble > 0) {
+            if (isLevelLocked) {
+                BubbleLevelLockInfo(requiredLevel = requiredLevel, currentLevel = currentLevel)
+            } else {
+                BubbleStatusInfo(
+                    isPurchased = isPurchased,
+                    isEquipped = isEquipped,
+                    price = price,
+                    isLuxPriced = selectedBubble in 6..8,
+                    isLevelUnlock = selectedBubble == 10
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Action Buttons
+        Row(
+            modifier = Modifier. fillMaxWidth(),
+            horizontalArrangement = Arrangement. spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = onBuyOrEquip,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = when {
+                        selectedBubble == 0 -> Color(0xFF666666)
+                        isLevelLocked -> Color(0xFF9C27B0)
+                        ! isPurchased -> Color(0xFFFF6D00)
+                        isEquipped -> Color(0xFFFF5252)
+                        else -> Color(0xFF4CAF50)
+                    }
+                ),
+                elevation = ButtonDefaults. buttonElevation(defaultElevation = 4.dp)
+            ) {
+                when {
+                    selectedBubble == 0 -> {
+                        BubbleStyledText(text = "Select", fontSize = 14, fontWeight = FontWeight. Bold)
+                    }
+                    isLevelLocked -> {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "🔒", fontSize = 14. sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            BubbleStyledText(text = "Level $requiredLevel Required", fontSize = 12, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    !isPurchased && selectedBubble != 10 -> {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            BubbleStyledText(text = "BUY $price", fontSize = 14, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Image(
+                                painter = painterResource(
+                                    id = if (selectedBubble >= 6) R.drawable.gemgame else R.drawable.coin
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                    isEquipped -> {
+                        BubbleStyledText(text = "UNEQUIP", fontSize = 14, fontWeight = FontWeight.Bold)
+                    }
+                    else -> {
+                        BubbleStyledText(text = "✓ EQUIP", fontSize = 14, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+
+            Button(
+                onClick = onReset,
+                modifier = Modifier
+                    .width(70.dp)
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF424242)),
+                elevation = ButtonDefaults. buttonElevation(defaultElevation = 4.dp)
+            ) {
+                BubbleStyledText(text = "↺", fontSize = 20, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+// ==================== LEVEL LOCK INFO ====================
+
+@Composable
+private fun BubbleLevelLockInfo(requiredLevel: Int, currentLevel: Int) {
+    val progress = (currentLevel. toFloat() / requiredLevel.toFloat()).coerceIn(0f, 1f)
+
+    Card(
+        modifier = Modifier. fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF9C27B0).copy(alpha = 0.2f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "⭐", fontSize = 16. sp)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Level $requiredLevel Exclusive",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight. Bold,
+                    color = Color(0xFFFFD700)
+                )
+            }
+
+            Spacer(modifier = Modifier. height(8.dp))
+
+            // Progress bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color. White. copy(alpha = 0.1f))
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        . height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF5252)
+                        .fillMaxWidth(progress)
+                        . height(8.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(Color(0xFFFF6D00), Color(0xFFFFD700))
+                            )
+                        )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Your Level: $currentLevel / $requiredLevel",
+                fontSize = 11.sp,
+                color = Color. White.copy(alpha = 0.7f)
+            )
+
+            Spacer(modifier = Modifier. height(4.dp))
+
+            Text(
+                text = "🎮 Keep playing to level up!",
+                fontSize = 10.sp,
+                color = Color(0xFF00E676)
+            )
+        }
+    }
+}
+
+// ==================== RARITY BADGE ====================
+
+@Composable
+private fun RarityBadge(rarity: BubbleRarity) {
+    val infiniteTransition = rememberInfiniteTransition(label = "rarityGlow")
+    val glowAlpha by infiniteTransition. animateFloat(
+        initialValue = 0.5f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow"
+    )
+
+    Box(
+        modifier = Modifier
+            . clip(RoundedCornerShape(8.dp))
+            .background(rarity.color.copy(alpha = 0.2f))
+            .border(
+                width = 1.dp,
+                color = rarity.color.copy(alpha = glowAlpha),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = rarity. label. uppercase(),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
+            color = rarity.color
+        )
+    }
+}
+
+// ==================== STATUS INFO ====================
+
+@Composable
+private fun BubbleStatusInfo(
+    isPurchased: Boolean,
+    isEquipped: Boolean,
+    price: Int,
+    isLuxPriced: Boolean,
+    isLevelUnlock: Boolean = false
+) {
+    Card(
+        modifier = Modifier. fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF0F0F1A).copy(alpha = 0.7f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                . fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Status
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Status",
+                    fontSize = 11.sp,
+                    color = Color. White.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = when {
+                        isEquipped -> "Equipped"
+                        isPurchased -> "Owned"
+                        else -> "Locked"
+                    },
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = when {
+                        isEquipped -> Color(0xFF4CAF50)
+                        isPurchased -> Color(0xFF2196F3)
+                        else -> Color(0xFFFF5252)
+                    }
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(30.dp)
+                    .background(Color.White.copy(alpha = 0.2f))
+            )
+
+            // Price/Unlock
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = if (isLevelUnlock) "Unlock" else "Price",
+                    fontSize = 11.sp,
+                    color = Color.White.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+
+                if (isLevelUnlock) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "⭐", fontSize = 12.sp)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (isPurchased) "UNLOCKED" else "Level 7",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isPurchased) Color(0xFF4CAF50) else Color(0xFFFFD700)
+                        )
+                    }
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = if (isPurchased) "OWNED" else "$price",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isPurchased) Color(0xFF4CAF50) else Color(0xFFFFD700)
+                        )
+                        if (! isPurchased) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Image(
+                                painter = painterResource(
+                                    id = if (isLuxPriced) R.drawable.gemgame else R. drawable.coin
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ==================== PARTICLES BACKGROUND ====================
+
+@Composable
+private fun BubbleParticlesBackground(rarityColor: Color) {
+    val infiniteTransition = rememberInfiniteTransition(label = "particles")
+
+    val particle1Y by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "p1"
+    )
+
+    val particle2Y by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, delayMillis = 500, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "p2"
+    )
+
+    Canvas(modifier = Modifier.fillMaxSize().alpha(0.4f)) {
+        val particleColor = rarityColor. copy(alpha = 0.3f)
+
+        drawCircle(
+            color = particleColor,
+            radius = 6f,
+            center = Offset(size.width * 0.2f, size.height * particle1Y)
+        )
+
+        drawCircle(
+            color = particleColor,
+            radius = 4f,
+            center = Offset(size. width * 0.7f, size.height * particle2Y)
+        )
+
+        drawCircle(
+            color = particleColor,
+            radius = 8f,
+            center = Offset(size.width * 0.5f, size.height * ((particle1Y + particle2Y) / 2))
+        )
+    }
+}
+
+// ==================== SELECTOR PANEL ====================
+
+@Composable
+private fun BubbleSelectorPanel(
+    equippedBubble: Int,
+    selectedBubble: Int,
+    onSelect: (Int) -> Unit,
+    onQuickBuy: (Int) -> Unit,
+    isPurchasedProvider: (Int) -> Boolean,
+    prices: Map<Int, Int>,
+    isLevel7BubbleUnlocked: Boolean = false,
+    currentLevel: Int = 1
+) {
+    // Include ID 10 (Level 7 exclusive) and new generated bubbles (11-30)
+    val bubbleList = listOf(1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30)
+    val scroll = rememberScrollState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF1A1A2E),
+                        Color(0xFF2A1A4A).copy(alpha = 0.5f)
                     )
+                )
+            )
+            .padding(12.dp)
+    ) {
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BubbleStyledText(
+                text = "🎯 Collection",
+                fontSize = 16,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "${bubbleList.count { isPurchasedProvider(it) }}/${bubbleList. size}",
+                fontSize = 12. sp,
+                color = Color.White. copy(alpha = 0.6f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // List
+        Column(
+            modifier = Modifier
+                . fillMaxSize()
+                .verticalScroll(scroll),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            bubbleList.forEach { id ->
+                val isLevelLockItem = id == 10
+                val isPurchased = if (isLevelLockItem) isLevel7BubbleUnlocked else isPurchasedProvider(id)
+
+                BubbleSelectorItem(
+                    id = id,
+                    name = getBubbleName(id),
+                    drawableId = getBubbleDrawable(id),
+                    rarity = getBubbleRarity(id),
+                    isPurchased = isPurchased,
+                    isEquipped = equippedBubble == id,
+                    isSelected = selectedBubble == id,
+                    price = prices[id] ?: 0,
+                    isLevelLocked = isLevelLockItem && ! isLevel7BubbleUnlocked,
+                    requiredLevel = if (isLevelLockItem) 7 else 0,
+                    currentLevel = currentLevel,
+                    onSelect = { onSelect(id) },
+                    onQuickBuy = { onQuickBuy(id) }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+    }
+}
+
+// ==================== SELECTOR ITEM ====================
+
+@Composable
+private fun BubbleSelectorItem(
+    id: Int,
+    name: String,
+    drawableId: Int,
+    rarity: BubbleRarity,
+    isPurchased: Boolean,
+    isEquipped: Boolean,
+    isSelected: Boolean,
+    price: Int,
+    isLevelLocked: Boolean = false,
+    requiredLevel: Int = 0,
+    currentLevel: Int = 1,
+    onSelect: () -> Unit,
+    onQuickBuy:  () -> Unit
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.02f else 1f,
+        animationSpec = spring(dampingRatio = 0.6f),
+        label = "itemScale"
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(76.dp)
+            .scale(scale)
+            .clickable { onSelect() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults. cardColors(
+            containerColor = if (isSelected)
+                rarity.color.copy(alpha = 0.15f)
+            else
+                Color(0xFF0F0F1A).copy(alpha = 0.6f)
+        ),
+        elevation = CardDefaults. cardElevation(
+            defaultElevation = if (isSelected) 6.dp else 2.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(
+                    if (isSelected) {
+                        Modifier.border(
+                            width = 2.dp,
+                            brush = Brush.linearGradient(
+                                colors = listOf(rarity.color, rarity.color.copy(alpha = 0.5f))
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    } else Modifier
+                )
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Thumbnail
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                rarity.color.copy(alpha = 0.2f),
+                                Color. Transparent
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                // Display generated bubble or drawable
+                if (isGeneratedBubble(id)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp)
+                            .alpha(if (isLevelLocked) 0.4f else 1f)
+                    ) {
+                        GetGeneratedBubble(id = id)
+                    }
+                } else {
+                    Image(
+                        painter = painterResource(id = drawableId),
+                        contentDescription = "bubble_$id",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp)
+                            .alpha(if (isLevelLocked) 0.4f else 1f),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+                // Lock overlay
+                if (isLevelLocked) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            . background(Color.Black.copy(alpha = 0.5f))
+                            .clip(RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "⭐", fontSize = 14.sp)
+                        }
+                    }
+                } else if (! isPurchased) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black. copy(alpha = 0.4f))
+                            .clip(RoundedCornerShape(10.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "🔒", fontSize = 16.sp)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            // Info
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = name,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier. height(2.dp))
+
+                // Rarity
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(rarity.color)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = rarity.label,
+                        fontSize = 10.sp,
+                        color = rarity.color
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                // Price/Status
+                if (isLevelLocked) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { onQuickBuy() }
+                    ) {
+                        Text(text = "⭐", fontSize = 10.sp)
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = "Level $requiredLevel",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight. Bold,
+                            color = Color(0xFFFFD700)
+                        )
+                    }
+                } else if (isPurchased) {
+                    Text(
+                        text = "✓ Owned",
+                        fontSize = 10.sp,
+                        color = Color(0xFF4CAF50)
+                    )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { onQuickBuy() }
+                    ) {
+                        Text(
+                            text = "$price",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFFD700)
+                        )
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Image(
+                            painter = painterResource(
+                                id = if (id in 6..8) R.drawable.gemgame else R. drawable.coin
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                }
+            }
+
+            // Equipped badge
+            if (isEquipped && !isLevelLocked) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF4CAF50))
+                        .padding(horizontal = 6.dp, vertical = 3.dp)
                 ) {
-                    BKOutlinedText(
-                        text = "🚪 Exit Game",
-                        fontSize = 18.sp,
+                    Text(
+                        text = "✓",
+                        fontSize = 12.sp,
                         fontWeight = FontWeight. Bold,
                         color = Color.White
                     )
@@ -973,893 +1451,304 @@ fun BKInGameSettingsDialog(
     }
 }
 
-// ==================== GAME OVER SCREEN ====================
+// ==================== LEVEL LOCK DIALOG ====================
 
 @Composable
-fun BKGameOverScreen(
-    isSuccess: Boolean,
-    pointsBase: Int,
-    targetScore: Int,
-    elapsedSeconds: Int,
-    sessionLuxEarned: Int,
-    storedRecord: Int,
-    onPlayAgain: () -> Unit,
-    onExit: () -> Unit
+private fun BubbleLevelLockDialog(
+    requiredLevel: Int,
+    currentLevel:  Int,
+    itemName: String,
+    onDismiss:  () -> Unit
 ) {
-    val finalPoints = pointsBase
-    val coinsEarned = finalPoints / 5
-    val isNewRecord = finalPoints > storedRecord
+    val progress = (currentLevel. toFloat() / requiredLevel.toFloat()).coerceIn(0f, 1f)
 
-    val overlayAlpha = remember { Animatable(0f) }
-    val cardScale = remember { Animatable(0.8f) }
-    val cardAlpha = remember { Animatable(0f) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Color(0xFF1A1A2E),
+        shape = RoundedCornerShape(20.dp),
+        title = {
+            Column(
+                modifier = Modifier. fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "⭐", fontSize = 48.sp)
 
-    LaunchedEffect(Unit) {
-        // Play coin earn sound
-        SoundManager.playCoinEarn()
+                Spacer(modifier = Modifier. height(8.dp))
 
-        launch { overlayAlpha.animateTo(1f, tween(300)) }
-        delay(150)
-        launch { cardAlpha.animateTo(1f, tween(300)) }
-        launch { cardScale.animateTo(1f, spring(dampingRatio = 0.6f, stiffness = 300f)) }
-    }
-
-    Box(
-        modifier = Modifier
-            . fillMaxSize()
-            .background(Color(0xCC000000).copy(alpha = overlayAlpha.value)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .scale(cardScale.value)
-                .alpha(cardAlpha. value)
-        ) {
-            if (isSuccess) {
-                BKAnimatedOutlinedText(
-                    text = "👑 VICTORY!  👑",
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                Text(
+                    text = "Level $requiredLevel Required",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color(0xFFFFD700)
                 )
-            } else {
-                BKOutlinedText(
-                    text = "💔 FAILED",
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFFFF4444)
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = itemName,
+                    fontSize = 14.sp,
+                    color = Color.White. copy(alpha = 0.8f)
                 )
             }
-
-            Spacer(modifier = Modifier. height(8.dp))
-
-            if (isNewRecord && finalPoints > 0) {
-                BKAnimatedOutlinedText(
-                    text = "🏆 NEW RECORD! 🏆",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF00FF88)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            Card(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth(0.9f),
-                colors = CardDefaults. cardColors(
-                    containerColor = Color(0xFF1A1A2E).copy(alpha = 0.95f)
-                ),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+        },
+        text = {
+            Column(
+                modifier = Modifier. fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Box(
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF0F0F1A).copy(alpha = 0.8f)
+                    )
+                ) {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            . background(
-                                brush = Brush.horizontalGradient(
-                                    colors = if (isSuccess) listOf(
-                                        Color(0xFFFFD700).copy(alpha = 0.2f),
-                                        Color(0xFF00FF88).copy(alpha = 0.2f)
-                                    ) else listOf(
-                                        Color(0xFFFF4444).copy(alpha = 0.2f),
-                                        Color(0xFFFF6B00).copy(alpha = 0.2f)
-                                    )
-                                ),
-                                shape = RoundedCornerShape(12.dp)
-                            )
                             .padding(16.dp),
-                        contentAlignment = Alignment.Center
+                        horizontalAlignment = Alignment. CenterHorizontally
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            BKOutlinedText(
-                                text = "FINAL SCORE",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color. White. copy(alpha = 0.7f)
-                            )
-                            BKAnimatedOutlinedText(
-                                text = "$finalPoints",
-                                fontSize = 48.sp,
+                        Text(
+                            text = "Your Progress",
+                            fontSize = 12.sp,
+                            color = Color.White. copy(alpha = 0.6f)
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Level display
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "$currentLevel",
+                                fontSize = 32.sp,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = if (isSuccess) Color(0xFFFFD700) else Color(0xFFFF6B00)
+                                color = Color(0xFFFF6D00)
                             )
-                            BKOutlinedText(
-                                text = "/ $targetScore",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Medium,
+                            Text(
+                                text = " / $requiredLevel",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight. Bold,
                                 color = Color. White.copy(alpha = 0.5f)
                             )
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement. SpaceBetween
-                    ) {
-                        BKStatItem(label = "Time", value = formatTimeBK(elapsedSeconds), icon = "⏱️")
-                        BKStatItem(label = "Bubbles", value = "${finalPoints / 10}", icon = "🫧")
-                    }
+                        // Progress bar
+                        Box(
+                            modifier = Modifier
+                                . fillMaxWidth()
+                                .height(12.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(Color.White.copy(alpha = 0.1f))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(progress)
+                                    .height(12.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(
+                                        brush = Brush.horizontalGradient(
+                                            colors = listOf(Color(0xFFFF6D00), Color(0xFFFFD700))
+                                        )
+                                    )
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider(color = Color. White.copy(alpha = 0.2f))
-                    Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        BKRewardItem(icon = R.drawable.coin, value = "+$coinsEarned", label = "Coins")
-                        BKRewardItem(icon = R.drawable. gemgame, value = "+$sessionLuxEarned", label = "Lux")
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement. Center
-                    ) {
-                        BKOutlinedText(
-                            text = "🏆 Record:  ${maxOf(finalPoints, storedRecord)}",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White. copy(alpha = 0.8f)
+                        Text(
+                            text = "${(progress * 100).toInt()}% Complete",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight. Bold,
+                            color = Color(0xFFFFD700)
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier. height(16.dp))
+
+                Text(
+                    text = "🎮 Keep playing games to earn XP and level up!",
+                    fontSize = 12.sp,
+                    color = Color(0xFF00E676),
+                    textAlign = TextAlign. Center
+                )
+
+                Spacer(modifier = Modifier. height(8.dp))
+
+                Text(
+                    text = "This exclusive bubble can only be unlocked by reaching Level $requiredLevel.  It cannot be purchased with coins or gems.",
+                    fontSize = 11.sp,
+                    color = Color. White.copy(alpha = 0.6f),
+                    textAlign = TextAlign.Center
+                )
             }
-
-            Spacer(modifier = Modifier. height(24.dp))
-
+        },
+        confirmButton = {
             Button(
-                onClick = onPlayAgain,
+                onClick = onDismiss,
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(56.dp),
-                shape = RoundedCornerShape(28.dp),
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isSuccess) Color(0xFF00C853) else Color(0xFFFF6D00)
-                ),
-                elevation = ButtonDefaults. buttonElevation(defaultElevation = 8.dp)
+                    containerColor = Color(0xFFFF6D00)
+                )
             ) {
-                BKOutlinedText(
-                    text = "🎮 TRY AGAIN",
-                    fontSize = 20.sp,
+                Text(
+                    text = "Got it!",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color. White
+                )
+            }
+        }
+    )
+}
+
+// ==================== PURCHASE DIALOG ====================
+
+@Composable
+private fun BubblePurchaseDialog(
+    bubbleId: Int,
+    bubbleName: String,
+    price: Int,
+    isLuxPriced: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val rarity = getBubbleRarity(bubbleId)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Color(0xFF1A1A2E),
+        shape = RoundedCornerShape(20.dp),
+        title = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "🛒 Confirm Purchase",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color. White
+                )
+
+                Spacer(modifier = Modifier. height(12.dp))
+
+                // Preview
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(rarity.color. copy(alpha = 0.15f))
+                        .border(
+                            width = 2.dp,
+                            color = rarity.color. copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = getBubbleDrawable(bubbleId)),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = bubbleName,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color. White
+                )
+
+                Spacer(modifier = Modifier. height(4.dp))
+
+                RarityBadge(rarity = rarity)
+            }
+        },
+        text = {
+            Card(
+                modifier = Modifier. fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF0F0F1A).copy(alpha = 0.8f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        . padding(12.dp),
+                    horizontalArrangement = Arrangement. Center,
+                    verticalAlignment = Alignment. CenterVertically
+                ) {
+                    Text(
+                        text = "Price: ",
+                        fontSize = 14.sp,
+                        color = Color.White. copy(alpha = 0.8f)
+                    )
+                    Text(
+                        text = "$price",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFFFD700)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Image(
+                        painter = painterResource(
+                            id = if (isLuxPriced) R.drawable.gemgame else R.drawable.coin
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50)
+                )
+            ) {
+                Text(
+                    text = "✓ Purchase",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
             }
-
-            Spacer(modifier = Modifier. height(12.dp))
-
-            TextButton(onClick = onExit) {
-                BKOutlinedText(
-                    text = "Exit",
-                    fontSize = 16.sp,
-                    color = Color.White. copy(alpha = 0.7f)
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(
+                    text = "Cancel",
+                    fontSize = 14.sp,
+                    color = Color.White. copy(alpha = 0.8f)
                 )
             }
         }
-    }
-}
-
-@Composable
-fun BKStatItem(label: String, value:  String, icon: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        BKOutlinedText(text = icon, fontSize = 20.sp, color = Color.White)
-        BKOutlinedText(
-            text = value,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        BKOutlinedText(
-            text = label,
-            fontSize = 12.sp,
-            color = Color.White.copy(alpha = 0.6f)
-        )
-    }
-}
-
-@Composable
-fun BKRewardItem(icon:  Int, value: String, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            painter = painterResource(id = icon),
-            contentDescription = label,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            BKOutlinedText(
-                text = value,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFFFD700)
-            )
-            BKOutlinedText(
-                text = label,
-                fontSize = 12.sp,
-                color = Color. White.copy(alpha = 0.6f)
-            )
-        }
-    }
-}
-
-// ==================== MAIN GAME SCREEN ====================
-
-@Composable
-fun BubbleKingScreen(onExit: () -> Unit) {
-    val context = LocalContext.current
-    val dataStore = remember { DataStoreManager(context) }
-
-    val equippedBubble by dataStore.equippedBubbleFlow().collectAsState(initial = 0)
-    val equippedBg by dataStore.equippedBackgroundFlow().collectAsState(initial = 0)
-
-    val bubbleRes = when (equippedBubble) {
-        1 -> R.drawable.goldenbubble
-        2 -> R.drawable.rainbowbubble
-        3 -> R.drawable.greenbubble
-        4 -> R. drawable.pinkbubble
-        5 -> R.drawable.cyberpunkbubble
-        6 -> R. drawable.oceanbubble
-        7 -> R. drawable.animebubble1
-        8 -> R.drawable.spacebubble
-        9 -> R.drawable.levelbubble
-        else -> R.drawable. bubble
-    }
-    val bubblePainter = painterResource(id = bubbleRes)
-
-    // Volume states
-    var musicVolume by remember { mutableFloatStateOf(MusicController.getMusicVolume()) }
-    var sfxVolume by remember { mutableFloatStateOf(SoundManager.getSfxVolume()) }
-
-    val bubbles = remember { mutableStateListOf<BKBubble>() }
-    val popEffects = remember { mutableStateListOf<BKPopEffect>() }
-    val floatingTexts = remember { mutableStateListOf<BKFloatingText>() }
-    val particles = remember { mutableStateListOf<BKParticle>() }
-    val luxEffects = remember { mutableStateListOf<BKLuxEffect>() }
-
-    val spawnJobs = remember { mutableStateMapOf<Int, Job>() }
-    val spawnStart = remember { mutableStateMapOf<Int, Long>() }
-    val remainingMap = remember { mutableStateMapOf<Int, Long>() }
-
-    var effectNextId by remember { mutableIntStateOf(0) }
-    var bubbleSeq by remember { mutableIntStateOf(0) }
-
-    val baseSpawn = 1200L
-    val baseLifespan = 2000L
-    val minSpawn = 200L
-    val minLifespan = 400L
-    val targetScore = 5000
-
-    var difficultyMultiplier by remember { mutableDoubleStateOf(1.0) }
-    var spawnIntervalMs by remember { mutableLongStateOf(baseSpawn) }
-    var bubbleLifespanMs by remember { mutableLongStateOf(baseLifespan) }
-    var elapsedSeconds by remember { mutableIntStateOf(0) }
-    var running by remember { mutableStateOf(false) }
-    var success by remember { mutableStateOf(false) }
-    var failed by remember { mutableStateOf(false) }
-    var exitedByUser by remember { mutableStateOf(false) }
-
-    var totalPopped by remember { mutableIntStateOf(0) }
-    var pointsBase by remember { mutableIntStateOf(0) }
-    var sessionLuxEarned by remember { mutableIntStateOf(0) }
-
-    val coroutineScope = rememberCoroutineScope()
-    val density = LocalDensity.current
-    val storedRecord by dataStore.highScoreBubbleKingFlow().collectAsState(initial = 0)
-
-    val topBarHeight = 120.dp
-    val topBarPadding = 12.dp
-    val totalTopReserved = topBarHeight + topBarPadding
-
-    val maxMultiplierBySpawn = baseSpawn. toDouble() / minSpawn.toDouble()
-    val maxMultiplierByLifespan = baseLifespan.toDouble() / minLifespan.toDouble()
-    val maxAllowedMultiplier = minOf(maxMultiplierBySpawn, maxMultiplierByLifespan)
-
-    var showCountdown by remember { mutableStateOf(true) }
-    var countdownValue by remember { mutableIntStateOf(3) }
-    var showPlayLabel by remember { mutableStateOf(false) }
-
-    var prevDifficultyMultiplier by remember { mutableDoubleStateOf(difficultyMultiplier) }
-    var diffText by remember { mutableStateOf("") }
-    var showDiffIndicator by remember { mutableStateOf(false) }
-
-    var showSettingsMenu by remember { mutableStateOf(false) }
-    var wasRunningBeforeMenu by remember { mutableStateOf(false) }
-    var showResumeCountdown by remember { mutableStateOf(false) }
-    var resumeCountdownValue by remember { mutableIntStateOf(3) }
-
-    // Start game music when entering
-    DisposableEffect(Unit) {
-        MusicController.startGameMusic()
-        onDispose {
-            MusicController.stopGameMusic()
-        }
-    }
-
-    fun scheduleTimeoutForBubble(bubble: BKBubble, delayMs: Long) {
-        spawnJobs. remove(bubble.id)?. cancel()
-        spawnStart[bubble.id] = System.currentTimeMillis()
-        val job = coroutineScope.launch {
-            try {
-                if (delayMs > 0) delay(delayMs)
-                val stillThere = bubbles.any { it.id == bubble.id }
-                if (stillThere) {
-                    failed = true
-                    running = false
-                }
-            } catch (_: CancellationException) { }
-        }
-        spawnJobs[bubble.id] = job
-    }
-
-    fun cancelAndStoreRemainingForAll() {
-        val now = System.currentTimeMillis()
-        for ((id, job) in spawnJobs. entries. toList()) {
-            val start = spawnStart[id] ?: now
-            val bubble = bubbles.find { it.id == id }
-            val lifespan = bubble?. lifespanMs ?:  bubbleLifespanMs
-            val elapsed = now - start
-            val remaining = (lifespan - elapsed).coerceAtLeast(0L)
-            remainingMap[id] = remaining
-            job.cancel()
-            spawnJobs. remove(id)
-            spawnStart.remove(id)
-        }
-    }
-
-    fun rescheduleRemainingOnResume() {
-        val copy = remainingMap. toMap()
-        for ((id, remaining) in copy) {
-            val bubble = bubbles.find { it.id == id }
-            if (bubble != null && remaining > 0L) {
-                remainingMap. remove(id)
-                scheduleTimeoutForBubble(bubble, remaining)
-            } else {
-                remainingMap.remove(id)
-            }
-        }
-    }
-
-    fun cancelAndClearAllSpawnJobs() {
-        for ((_, job) in spawnJobs) job.cancel()
-        spawnJobs. clear()
-        spawnStart.clear()
-        remainingMap.clear()
-    }
-
-    fun createParticles(centerX:  Dp, centerY:  Dp, count: Int = 8) {
-        val colors = listOf(
-            Color(0xFFFFD700),
-            Color(0xFFFF6B00),
-            Color(0xFF00FF88),
-            Color(0xFF00BFFF),
-            Color. White
-        )
-
-        repeat(count) { i ->
-            val angle = (2 * PI * i / count).toFloat()
-            val particle = BKParticle(
-                id = effectNextId++,
-                x = centerX,
-                y = centerY,
-                angle = angle,
-                speed = Random.nextFloat() * 0.5f + 0.5f,
-                color = colors. random(),
-                size = (Random.nextFloat() * 4f + 4f).dp
-            )
-            particles.add(particle)
-
-            coroutineScope.launch {
-                delay(500)
-                particles. removeAll { it.id == particle.id }
-            }
-        }
-    }
-
-    fun triggerGameOver() {
-        failed = true
-        running = false
-        cancelAndClearAllSpawnJobs()
-    }
-
-    LaunchedEffect(Unit) {
-        delay(120L)
-        for (i in 3 downTo 1) {
-            countdownValue = i
-            delay(1000L)
-        }
-        showPlayLabel = true
-        delay(450L)
-        showCountdown = false
-        showPlayLabel = false
-        running = true
-    }
-
-    LaunchedEffect(difficultyMultiplier) {
-        val computedSpawn = (baseSpawn / difficultyMultiplier).toLong().coerceAtLeast(minSpawn)
-        val computedLifespan = (baseLifespan / difficultyMultiplier).toLong().coerceAtLeast(minLifespan)
-        spawnIntervalMs = computedSpawn
-        bubbleLifespanMs = computedLifespan
-    }
-
-    LaunchedEffect(difficultyMultiplier) {
-        if (difficultyMultiplier != prevDifficultyMultiplier) {
-            val change = if (prevDifficultyMultiplier == 0.0) {
-                (difficultyMultiplier - 1.0) * 100.0
-            } else {
-                (difficultyMultiplier - prevDifficultyMultiplier) / prevDifficultyMultiplier * 100.0
-            }
-            val formatted = String.format(Locale.US, "%.0f", change)
-            diffText = if (change >= 0) "+$formatted% Speed!" else "$formatted% Speed"
-            showDiffIndicator = true
-            prevDifficultyMultiplier = difficultyMultiplier
-            delay(1000L)
-            showDiffIndicator = false
-        }
-    }
-
-    LaunchedEffect(running) {
-        if (! running) return@LaunchedEffect
-        while (running && ! success && !failed) {
-            delay(1000L)
-            elapsedSeconds += 1
-            if (elapsedSeconds % 30 == 0) {
-                val nextMultiplier = difficultyMultiplier * 1.25
-                difficultyMultiplier = if (nextMultiplier > maxAllowedMultiplier) maxAllowedMultiplier else nextMultiplier
-            }
-        }
-    }
-
-    var maxWidth by remember { mutableStateOf(0.dp) }
-    var maxHeight by remember { mutableStateOf(0.dp) }
-
-    LaunchedEffect(running) {
-        if (!running) return@LaunchedEffect
-        rescheduleRemainingOnResume()
-        while (running && !success && !failed) {
-            val bubbleSizeDp = 72.dp
-            val xDp = ((Random.nextFloat() * (maxWidth - bubbleSizeDp).value)).dp
-            val yRange = (maxHeight - bubbleSizeDp - totalTopReserved)
-            val yDp = (totalTopReserved. value + Random.nextFloat() * yRange.value).dp
-
-            val id = bubbleSeq++
-            val lifespan = bubbleLifespanMs
-            val spawnedAt = System.currentTimeMillis()
-            val bubble = BKBubble(
-                id = id,
-                x = xDp,
-                y = yDp,
-                size = bubbleSizeDp,
-                lifespanMs = lifespan,
-                spawnedAtMillis = spawnedAt
-            )
-
-            bubbles.add(bubble)
-            scheduleTimeoutForBubble(bubble, lifespan)
-
-            delay(spawnIntervalMs)
-        }
-    }
-
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        maxWidth = this.maxWidth
-        maxHeight = this. maxHeight
-
-        // Background
-        if (equippedBg > 0) {
-            // Check if it's a generated background (IDs 12-21)
-            if (equippedBg >= 12) {
-                GeneratedGameBackgroundPreview(id = equippedBg, modifier = Modifier.fillMaxSize())
-            } else {
-                // Static image backgrounds (IDs 1-11)
-                val bgRes = when (equippedBg) {
-                    1 -> R.drawable.background1
-                    2 -> R.drawable.background2
-                    3 -> R.drawable. background3
-                    4 -> R.drawable.background4
-                    5 -> R. drawable.background5
-                    6 -> R.drawable.background6
-                    7 -> R.drawable.background7
-                    8 -> R.drawable. background8
-                    9 -> R.drawable.background9
-                    10 -> R.drawable.background10
-                    11 -> R.drawable.background11
-                    else -> 0
-                }
-                if (bgRes != 0) {
-                    Image(
-                        painter = painterResource(id = bgRes),
-                        contentDescription = "game_background",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale. Crop
-                    )
-                } else {
-                    BKDefaultGradientBackground()
-                }
-            }
-        } else {
-            BKDefaultGradientBackground()
-        }
-
-        // Settings button
-        Box(
-            modifier = Modifier
-                . align(Alignment.TopCenter)
-                .padding(top = 20.dp)
-                .size(48.dp)
-                .zIndex(10f)
-                .clip(CircleShape)
-                .background(Color(0xFF1A1A2E).copy(alpha = 0.7f))
-                .clickable {
-                    if (! showSettingsMenu && !success && !failed) {
-                        wasRunningBeforeMenu = running
-                        running = false
-                        cancelAndStoreRemainingForAll()
-                        showSettingsMenu = true
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.settingsicon),
-                contentDescription = "settings_button",
-                modifier = Modifier.size(28.dp)
-            )
-        }
-
-        // Top bar
-        BKTopBar(
-            points = pointsBase,
-            targetScore = targetScore,
-            elapsedSeconds = elapsedSeconds,
-            modifier = Modifier.padding(top = 70.dp)
-        )
-
-        // Game area - touch handling
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(bubbles. toList(), success, failed, running) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            val event = awaitPointerEvent()
-                            for (change in event.changes) {
-                                try {
-                                    if (change.changedToUp()) {
-                                        if (! running || success || failed) {
-                                            change.consume()
-                                            continue
-                                        }
-
-                                        val tapOffset = change.position
-                                        val densityLocal = density
-                                        var hitBubble: BKBubble? = null
-                                        val snapshot = bubbles.toList().asReversed()
-
-                                        for (b in snapshot) {
-                                            val bx = with(densityLocal) { b.x. toPx() }
-                                            val by = with(densityLocal) { b.y.toPx() }
-                                            val bs = with(densityLocal) { b.size.toPx() }
-                                            if (tapOffset.x >= bx && tapOffset.x <= bx + bs &&
-                                                tapOffset. y >= by && tapOffset.y <= by + bs
-                                            ) {
-                                                hitBubble = b
-                                                break
-                                            }
-                                        }
-
-                                        if (hitBubble != null) {
-                                            val removed = bubbles.removeAll { it.id == hitBubble.id }
-                                            if (removed) {
-                                                spawnJobs.remove(hitBubble.id)?.cancel()
-                                                spawnStart. remove(hitBubble.id)
-                                                remainingMap.remove(hitBubble. id)
-
-                                                // Play bubble pop sound
-                                                SoundManager.playBubblePop()
-
-                                                totalPopped += 1
-                                                val pointsEarned = 10
-                                                pointsBase += pointsEarned
-
-                                                coroutineScope.launch {
-                                                    dataStore.addTotalPops(1)
-                                                }
-
-                                                val popEffectUid = effectNextId++
-                                                val effectSize = hitBubble.size * 1.25f
-                                                val effectX = hitBubble.x + (hitBubble.size - effectSize) / 2f
-                                                val effectY = hitBubble.y + (hitBubble.size - effectSize) / 2f
-
-                                                popEffects.add(BKPopEffect(id = popEffectUid, x = effectX, y = effectY, size = effectSize))
-
-                                                val floatingTextId = effectNextId++
-                                                floatingTexts.add(
-                                                    BKFloatingText(
-                                                        id = floatingTextId,
-                                                        x = hitBubble.x + hitBubble.size / 4,
-                                                        y = hitBubble.y,
-                                                        text = "+$pointsEarned",
-                                                        color = Color(0xFF00FF88),
-                                                        fontSize = 18.sp
-                                                    )
-                                                )
-
-                                                val centerX = hitBubble.x + hitBubble.size / 2
-                                                val centerY = hitBubble.y + hitBubble.size / 2
-                                                createParticles(centerX, centerY, 8)
-
-                                                val luxChance = 0.05
-                                                if (Random.nextFloat() < luxChance) {
-                                                    sessionLuxEarned += 1
-                                                    coroutineScope.launch { dataStore.addLux(1) }
-                                                    val luxEffectSize = hitBubble.size * 0.9f
-                                                    val luxX = hitBubble.x + (hitBubble.size - luxEffectSize) / 2f
-                                                    val luxY = hitBubble.y - luxEffectSize * 0.3f
-                                                    val uid = effectNextId++
-                                                    luxEffects.add(BKLuxEffect(id = uid, x = luxX, y = luxY, size = luxEffectSize))
-                                                    coroutineScope.launch {
-                                                        delay(900L)
-                                                        luxEffects.removeAll { it.id == uid }
-                                                    }
-                                                }
-
-                                                coroutineScope.launch {
-                                                    delay(600L)
-                                                    popEffects.removeAll { it.id == popEffectUid }
-                                                }
-
-                                                coroutineScope.launch {
-                                                    delay(850L)
-                                                    floatingTexts.removeAll { it.id == floatingTextId }
-                                                }
-
-                                                if (pointsBase >= targetScore) {
-                                                    success = true
-                                                    running = false
-                                                }
-                                            }
-                                        }
-
-                                        change.consume()
-                                    }
-                                } catch (_: Exception) { }
-                            }
-                        }
-                    }
-                }
-        ) {
-            // Draw bubbles
-            bubbles.toList().forEach { b ->
-                key(b.id) {
-                    BKBubbleView(bubble = b, bubblePainter = bubblePainter)
-                }
-            }
-
-            // Draw pop effects
-            popEffects.toList().forEach { effect ->
-                key(effect.id) {
-                    BKPopEffectView(effect = effect) { popEffects.removeAll { it.id == effect.id } }
-                }
-            }
-
-            // Draw particles
-            particles.toList().forEach { particle ->
-                key(particle.id) {
-                    BKParticleView(particle = particle)
-                }
-            }
-
-            // Draw floating texts
-            floatingTexts.toList().forEach { floatingText ->
-                key(floatingText.id) {
-                    BKFloatingTextEffect(floatingText = floatingText) { floatingTexts.removeAll { it.id == floatingText.id } }
-                }
-            }
-
-            // Draw lux effects
-            luxEffects.toList().forEach { luxEffect ->
-                key(luxEffect.id) {
-                    BKLuxEffectView(effect = luxEffect) { luxEffects.removeAll { it.id == luxEffect.id } }
-                }
-            }
-
-            // Difficulty indicator
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-                BKDifficultyCenterIndicator(text = diffText, visible = showDiffIndicator, modifier = Modifier. padding(top = 180.dp))
-            }
-
-            // Game Over Screen
-            if (success || failed) {
-                cancelAndClearAllSpawnJobs()
-
-                val finalPoints = pointsBase
-                val coinsEarned = finalPoints / 5
-
-                LaunchedEffect(finalPoints) {
-                    if (finalPoints > storedRecord) {
-                        dataStore.saveHighScoreBubbleKing(finalPoints)
-                    }
-                    if (coinsEarned > 0) {
-                        dataStore.addCoins(coinsEarned)
-                    }
-                }
-
-                BKGameOverScreen(
-                    isSuccess = success,
-                    pointsBase = finalPoints,
-                    targetScore = targetScore,
-                    elapsedSeconds = elapsedSeconds,
-                    sessionLuxEarned = sessionLuxEarned,
-                    storedRecord = storedRecord,
-                    onPlayAgain = {
-                        cancelAndClearAllSpawnJobs()
-                        bubbles.clear()
-                        popEffects.clear()
-                        floatingTexts.clear()
-                        particles.clear()
-                        luxEffects. clear()
-
-                        elapsedSeconds = 0
-                        difficultyMultiplier = 1.0
-                        spawnIntervalMs = baseSpawn
-                        bubbleLifespanMs = baseLifespan
-                        effectNextId = 0
-                        bubbleSeq = 0
-                        totalPopped = 0
-                        pointsBase = 0
-                        sessionLuxEarned = 0
-                        success = false
-                        failed = false
-                        exitedByUser = false
-                        showCountdown = true
-                        countdownValue = 3
-                        showPlayLabel = false
-                        prevDifficultyMultiplier = 1.0
-                        diffText = ""
-                        showDiffIndicator = false
-
-                        coroutineScope.launch {
-                            delay(120L)
-                            for (i in 3 downTo 1) {
-                                countdownValue = i
-                                delay(1000L)
-                            }
-                            showPlayLabel = true
-                            delay(450L)
-                            showCountdown = false
-                            showPlayLabel = false
-                            running = true
-                        }
-                    },
-                    onExit = onExit
-                )
-            }
-
-            // Countdown overlay
-            if (showCountdown) {
-                BKCountdownOverlay(countdownValue = countdownValue, showPlayLabel = showPlayLabel)
-            }
-
-            // Settings Dialog
-            if (showSettingsMenu) {
-                BKInGameSettingsDialog(
-                    onDismiss = {
-                        showSettingsMenu = false
-                        if (wasRunningBeforeMenu) {
-                            showResumeCountdown = true
-                            resumeCountdownValue = 3
-                            coroutineScope.launch {
-                                for (i in 3 downTo 1) {
-                                    resumeCountdownValue = i
-                                    SoundManager.playCountdown()
-                                    delay(1000L)
-                                }
-                                showResumeCountdown = false
-                                running = true
-                                wasRunningBeforeMenu = false
-                            }
-                        } else {
-                            wasRunningBeforeMenu = false
-                        }
-                    },
-                    onResume = {
-                        showSettingsMenu = false
-                        if (wasRunningBeforeMenu) {
-                            showResumeCountdown = true
-                            resumeCountdownValue = 3
-                            coroutineScope. launch {
-                                for (i in 3 downTo 1) {
-                                    resumeCountdownValue = i
-                                    SoundManager.playCountdown()
-                                    delay(1000L)
-                                }
-                                showResumeCountdown = false
-                                running = true
-                                wasRunningBeforeMenu = false
-                            }
-                        } else {
-                            wasRunningBeforeMenu = false
-                        }
-                    },
-                    onExit = {
-                        showSettingsMenu = false
-                        exitedByUser = true
-                        triggerGameOver()
-                    },
-                    musicVolume = musicVolume,
-                    onMusicVolumeChange = { newVolume ->
-                        musicVolume = newVolume
-                        MusicController.setMusicVolume(newVolume)
-                    },
-                    sfxVolume = sfxVolume,
-                    onSfxVolumeChange = { newVolume ->
-                        sfxVolume = newVolume
-                        SoundManager.setSfxVolume(newVolume)
-                    }
-                )
-            }
-
-            // Resume countdown overlay
-            if (showResumeCountdown) {
-                Box(
-                    modifier = Modifier
-                        . fillMaxSize()
-                        .background(Color(0xAA000000))
-                        .pointerInput(Unit) {
-                            awaitPointerEventScope {
-                                while (true) {
-                                    val ev = awaitPointerEvent()
-                                    ev.changes.forEach { it.consume() }
-                                }
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(contentAlignment = Alignment. Center) {
-                        BKOutlinedText(
-                            text = resumeCountdownValue. toString(),
-                            fontSize = 150.sp,
-                            fontWeight = FontWeight. ExtraBold,
-                            color = Color(0xFFFFD700).copy(alpha = 0.3f),
-                            modifier = Modifier. blur(24.dp).scale(1.2f)
-                        )
-                        BKOutlinedText(
-                            text = resumeCountdownValue. toString(),
-                            fontSize = 140.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color. White
-                        )
-                    }
-                }
-            }
-        }
-    }
+    )
 }
