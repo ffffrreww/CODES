@@ -280,22 +280,22 @@ private fun GeneratedGameBackgroundPreview(id: Int, modifier: Modifier = Modifie
     }
 }
 // ==================== BUBBLE VIEW ====================
-
 @Composable
 fun PSBubbleView(
     bubble: PSBubble,
-    bubblePainter: androidx.compose.ui. graphics.painter. Painter,
-    modifier: Modifier = Modifier
+    bubblePainter: androidx.compose.ui.graphics.painter.Painter,
+    modifier: Modifier = Modifier,
+    equippedBubbleId: Int = 0
 ) {
     val spawnScale = remember { Animatable(0f) }
     val wobble = remember { Animatable(0f) }
 
-    LaunchedEffect(bubble. id) {
+    LaunchedEffect(bubble.id) {
         launch {
             spawnScale.animateTo(1f, spring(dampingRatio = 0.5f, stiffness = 300f))
         }
         launch {
-            wobble. animateTo(
+            wobble.animateTo(
                 1f,
                 infiniteRepeatable(
                     animation = tween(1500, easing = EaseInOutSine),
@@ -307,16 +307,68 @@ fun PSBubbleView(
 
     val wobbleOffset = (wobble.value - 0.5f) * 4f
 
-    Image(
-        painter = bubblePainter,
-        contentDescription = "bubble",
-        modifier = modifier
-            .size(bubble.size)
-            .offset { IntOffset(bubble.x.roundToPx(), (bubble.y + wobbleOffset. dp).roundToPx()) }
-            .scale(spawnScale.value)
-            .graphicsLayer { rotationZ = wobbleOffset * 2f }
-    )
+    if (isGeneratedBubble(equippedBubbleId)) {
+        // Render generated bubble
+        Box(
+            modifier = modifier
+                .size(bubble.size)
+                .offset { IntOffset(bubble.x.roundToPx(), (bubble.y + wobbleOffset.dp).roundToPx()) }
+                .scale(spawnScale.value)
+                .graphicsLayer { rotationZ = wobbleOffset * 2f }
+        ) {
+            GetGeneratedBubbleForGame(
+                id = equippedBubbleId,
+                size = bubble.size,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    } else {
+        // Render drawable bubble
+        Image(
+            painter = bubblePainter,
+            contentDescription = "bubble",
+            modifier = modifier
+                .size(bubble.size)
+                .offset { IntOffset(bubble.x.roundToPx(), (bubble.y + wobbleOffset.dp).roundToPx()) }
+                .scale(spawnScale.value)
+                .graphicsLayer { rotationZ = wobbleOffset * 2f }
+        )
+    }
 }
+
+
+// ==================== HELPER FOR GENERATED BUBBLES ====================
+
+private fun isGeneratedBubble(id: Int): Boolean = id in 11..30
+
+@Composable
+private fun GetGeneratedBubbleForGame(id: Int, size: Dp, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.size(size)) {
+        when (id) {
+            11 -> FireBubble(Modifier.fillMaxSize())
+            12 -> IceBubble(Modifier.fillMaxSize())
+            13 -> ElectricBubble(Modifier.fillMaxSize())
+            14 -> NatureBubble(Modifier.fillMaxSize())
+            15 -> GalaxyBubble(Modifier.fillMaxSize())
+            16 -> LavaBubble(Modifier.fillMaxSize())
+            17 -> CrystalBubble(Modifier.fillMaxSize())
+            18 -> SunsetBubble(Modifier.fillMaxSize())
+            19 -> MidnightBubble(Modifier.fillMaxSize())
+            20 -> CherryBlossomBubble(Modifier.fillMaxSize())
+            21 -> ToxicBubble(Modifier.fillMaxSize())
+            22 -> WaterBubble(Modifier.fillMaxSize())
+            23 -> DiamondBubble(Modifier.fillMaxSize())
+            24 -> NeonBubble(Modifier.fillMaxSize())
+            25 -> AuroraBubble(Modifier.fillMaxSize())
+            26 -> RainbowSwirlBubble(Modifier.fillMaxSize())
+            27 -> SmokeBubble(Modifier.fillMaxSize())
+            28 -> CandyBubble(Modifier.fillMaxSize())
+            29 -> MetalBubble(Modifier.fillMaxSize())
+            30 -> PlasmaBubble(Modifier.fillMaxSize())
+        }
+    }
+}
+
 
 // ==================== POP EFFECT VIEW ====================
 
@@ -1223,7 +1275,7 @@ fun PerfectStreakScreen(onExit: () -> Unit) {
         6 -> R.drawable.oceanbubble
         7 -> R. drawable.animebubble1
         8 -> R.drawable.spacebubble
-        9 -> R.drawable.levelbubble
+        10 -> R.drawable.levelbubble
         else -> R.drawable. bubble
     }
     val bubblePainter = painterResource(id = bubbleRes)
@@ -1647,7 +1699,7 @@ fun PerfectStreakScreen(onExit: () -> Unit) {
             // Draw bubbles
             bubbles.toList().forEach { b ->
                 key(b.id) {
-                    PSBubbleView(bubble = b, bubblePainter = bubblePainter)
+                    PSBubbleView(bubble = b, bubblePainter = bubblePainter, equippedBubbleId = equippedBubble)
                 }
             }
 
