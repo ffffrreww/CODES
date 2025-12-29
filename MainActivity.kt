@@ -1283,6 +1283,7 @@ fun ChallengesPageContent(
                 4 -> context.startActivity(Intent(context, SpeedDemonActivity::class.java))
                 5 -> context.startActivity(Intent(context, AccuracyKingActivity::class.java))
                 6 -> context.startActivity(Intent(context, EnduranceMasterActivity::class.java))
+                else -> { /* Invalid challenge ID */ }
             }
         }
     }
