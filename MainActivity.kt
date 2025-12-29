@@ -890,6 +890,383 @@ fun PlayPageContent(
     }
 }
 
+// ==================== CHALLENGES LIST ====================
+
+@Composable
+fun ChallengesList(
+    ds: DataStoreManager,
+    onChallengeClick: (Int) -> Unit
+) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+    
+    // Get high scores for all challenges
+    val bubbleKingScore by ds.highScoreBubbleKingFlow().collectAsState(initial = 0)
+    val perfectStreakScore by ds.highScorePerfectStreakFlow().collectAsState(initial = 0)
+    val timeMasterScore by ds.highScoreTimeMasterFlow().collectAsState(initial = 0)
+    val speedDemonScore by ds.highScoreSpeedDemonFlow().collectAsState(initial = 0)
+    val accuracyKingScore by ds.highScoreAccuracyKingFlow().collectAsState(initial = 0)
+    val enduranceMasterScore by ds.highScoreEnduranceMasterFlow().collectAsState(initial = 0)
+    
+    // Reward claim states
+    val challenge1_30 by ds.isChallengeRewardClaimedFlow(1, 30).collectAsState(initial = false)
+    val challenge1_60 by ds.isChallengeRewardClaimedFlow(1, 60).collectAsState(initial = false)
+    val challenge1_100 by ds.isChallengeRewardClaimedFlow(1, 100).collectAsState(initial = false)
+    
+    val challenge2_30 by ds.isChallengeRewardClaimedFlow(2, 30).collectAsState(initial = false)
+    val challenge2_60 by ds.isChallengeRewardClaimedFlow(2, 60).collectAsState(initial = false)
+    val challenge2_100 by ds.isChallengeRewardClaimedFlow(2, 100).collectAsState(initial = false)
+    
+    val challenge3_30 by ds.isChallengeRewardClaimedFlow(3, 30).collectAsState(initial = false)
+    val challenge3_60 by ds.isChallengeRewardClaimedFlow(3, 60).collectAsState(initial = false)
+    val challenge3_100 by ds.isChallengeRewardClaimedFlow(3, 100).collectAsState(initial = false)
+    
+    val challenge4_30 by ds.isChallengeRewardClaimedFlow(4, 30).collectAsState(initial = false)
+    val challenge4_60 by ds.isChallengeRewardClaimedFlow(4, 60).collectAsState(initial = false)
+    val challenge4_100 by ds.isChallengeRewardClaimedFlow(4, 100).collectAsState(initial = false)
+    
+    val challenge5_30 by ds.isChallengeRewardClaimedFlow(5, 30).collectAsState(initial = false)
+    val challenge5_60 by ds.isChallengeRewardClaimedFlow(5, 60).collectAsState(initial = false)
+    val challenge5_100 by ds.isChallengeRewardClaimedFlow(5, 100).collectAsState(initial = false)
+    
+    val challenge6_30 by ds.isChallengeRewardClaimedFlow(6, 30).collectAsState(initial = false)
+    val challenge6_60 by ds.isChallengeRewardClaimedFlow(6, 60).collectAsState(initial = false)
+    val challenge6_100 by ds.isChallengeRewardClaimedFlow(6, 100).collectAsState(initial = false)
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460))
+                )
+            )
+            .padding(16.dp)
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Header
+        MainOutlinedText(
+            text = "🏆 CHALLENGES",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        
+        // Challenge 1: Bubble King
+        ChallengeCard(
+            id = 1,
+            title = "Bubble King",
+            description = "Survive as many waves as possible",
+            icon = "👑",
+            bestScore = bubbleKingScore,
+            targetScore = 30,
+            reward30 = "Fire Bubble",
+            reward60 = "Starfield Background",
+            reward100 = "Neon Pulse Menu",
+            claimed30 = challenge1_30,
+            claimed60 = challenge1_60,
+            claimed100 = challenge1_100,
+            onClick = { onChallengeClick(1) }
+        )
+        
+        // Challenge 2: Perfect Streak
+        ChallengeCard(
+            id = 2,
+            title = "Perfect Streak",
+            description = "Maintain perfect accuracy",
+            icon = "🎯",
+            bestScore = perfectStreakScore,
+            targetScore = 100,
+            reward30 = "Ice Bubble",
+            reward60 = "Ocean Waves Background",
+            reward100 = "Geometric Waves Menu",
+            claimed30 = challenge2_30,
+            claimed60 = challenge2_60,
+            claimed100 = challenge2_100,
+            onClick = { onChallengeClick(2) }
+        )
+        
+        // Challenge 3: Time Master
+        ChallengeCard(
+            id = 3,
+            title = "Time Master",
+            description = "Pop bubbles against the clock",
+            icon = "⏱️",
+            bestScore = timeMasterScore,
+            targetScore = 50,
+            reward30 = "Electric Bubble",
+            reward60 = "Aurora Borealis Background",
+            reward100 = "Particle Field Menu",
+            claimed30 = challenge3_30,
+            claimed60 = challenge3_60,
+            claimed100 = challenge3_100,
+            onClick = { onChallengeClick(3) }
+        )
+        
+        // Challenge 4: Speed Demon
+        ChallengeCard(
+            id = 4,
+            title = "Speed Demon",
+            description = "Pop bubbles as fast as possible",
+            icon = "⚡",
+            bestScore = speedDemonScore,
+            targetScore = 5000,
+            reward30 = "Nature Bubble",
+            reward60 = "Volcanic Background",
+            reward100 = "Gradient Mesh Menu",
+            claimed30 = challenge4_30,
+            claimed60 = challenge4_60,
+            claimed100 = challenge4_100,
+            onClick = { onChallengeClick(4) }
+        )
+        
+        // Challenge 5: Accuracy King
+        ChallengeCard(
+            id = 5,
+            title = "Accuracy King",
+            description = "Perfect accuracy challenge",
+            icon = "🎪",
+            bestScore = accuracyKingScore,
+            targetScore = 100,
+            reward30 = "Galaxy Bubble",
+            reward60 = "Cyberpunk City Background",
+            reward100 = "Matrix Rain Menu",
+            claimed30 = challenge5_30,
+            claimed60 = challenge5_60,
+            claimed100 = challenge5_100,
+            onClick = { onChallengeClick(5) }
+        )
+        
+        // Challenge 6: Endurance Master
+        ChallengeCard(
+            id = 6,
+            title = "Endurance Master",
+            description = "Survive without missing",
+            icon = "🛡️",
+            bestScore = enduranceMasterScore,
+            targetScore = 180,
+            reward30 = "Lava Bubble",
+            reward60 = "Underwater Background",
+            reward100 = "Cosmic Nebula Menu",
+            claimed30 = challenge6_30,
+            claimed60 = challenge6_60,
+            claimed100 = challenge6_100,
+            onClick = { onChallengeClick(6) }
+        )
+        
+        Spacer(modifier = Modifier.height(20.dp))
+    }
+}
+
+@Composable
+fun ChallengeCard(
+    id: Int,
+    title: String,
+    description: String,
+    icon: String,
+    bestScore: Int,
+    targetScore: Int,
+    reward30: String,
+    reward60: String,
+    reward100: String,
+    claimed30: Boolean,
+    claimed60: Boolean,
+    claimed100: Boolean,
+    onClick: () -> Unit
+) {
+    val progress = (bestScore.toFloat() / targetScore.toFloat()).coerceIn(0f, 1f)
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1A1A2E).copy(alpha = 0.9f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = icon, fontSize = 32.sp)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        MainOutlinedText(
+                            text = title,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        MainOutlinedText(
+                            text = description,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+                
+                // Best score
+                Column(horizontalAlignment = Alignment.End) {
+                    MainOutlinedText(
+                        text = "Best",
+                        fontSize = 10.sp,
+                        color = Color.White.copy(alpha = 0.6f)
+                    )
+                    MainOutlinedText(
+                        text = "$bestScore",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFFFD700)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Progress bar
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    MainOutlinedText(
+                        text = "Progress",
+                        fontSize = 11.sp,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                    MainOutlinedText(
+                        text = "${(progress * 100).toInt()}%",
+                        fontSize = 11.sp,
+                        color = Color(0xFFFF6D00)
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = Color(0xFFFF6D00),
+                    trackColor = Color.White.copy(alpha = 0.2f)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Rewards
+            MainOutlinedText(
+                text = "Rewards",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Reward rows
+            RewardRow(
+                percentage = "30%",
+                rewardName = reward30,
+                claimed = claimed30,
+                achieved = progress >= 0.3f
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            RewardRow(
+                percentage = "60%",
+                rewardName = reward60,
+                claimed = claimed60,
+                achieved = progress >= 0.6f
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            RewardRow(
+                percentage = "100%",
+                rewardName = reward100,
+                claimed = claimed100,
+                achieved = progress >= 1.0f
+            )
+        }
+    }
+}
+
+@Composable
+fun RewardRow(
+    percentage: String,
+    rewardName: String,
+    claimed: Boolean,
+    achieved: Boolean
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(
+                        when {
+                            claimed -> Color(0xFF4CAF50)
+                            achieved -> Color(0xFFFF6D00)
+                            else -> Color.White.copy(alpha = 0.2f)
+                        }
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = when {
+                        claimed -> "✓"
+                        achieved -> "!"
+                        else -> percentage
+                    },
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            MainOutlinedText(
+                text = rewardName,
+                fontSize = 13.sp,
+                color = when {
+                    claimed -> Color(0xFF4CAF50)
+                    achieved -> Color.White
+                    else -> Color.White.copy(alpha = 0.5f)
+                }
+            )
+        }
+        
+        if (claimed) {
+            MainOutlinedText(
+                text = "Claimed",
+                fontSize = 11.sp,
+                color = Color(0xFF4CAF50)
+            )
+        } else if (achieved) {
+            MainOutlinedText(
+                text = "Ready!",
+                fontSize = 11.sp,
+                color = Color(0xFFFF6D00),
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
 // ==================== CHALLENGES PAGE CONTENT ====================
 
 @Composable
@@ -900,9 +1277,12 @@ fun ChallengesPageContent(
     Box(modifier = Modifier.fillMaxSize()) {
         ChallengesList(ds = ds) { id ->
             when (id) {
-                1 -> context.startActivity(Intent(context, BubbleKingActivity::class. java))
-                2 -> context.startActivity(Intent(context, PerfectStreakActivity::class. java))
+                1 -> context.startActivity(Intent(context, BubbleKingActivity::class.java))
+                2 -> context.startActivity(Intent(context, PerfectStreakActivity::class.java))
                 3 -> context.startActivity(Intent(context, TimeMasterActivity::class.java))
+                4 -> context.startActivity(Intent(context, SpeedDemonActivity::class.java))
+                5 -> context.startActivity(Intent(context, AccuracyKingActivity::class.java))
+                6 -> context.startActivity(Intent(context, EnduranceMasterActivity::class.java))
             }
         }
     }

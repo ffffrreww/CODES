@@ -82,6 +82,9 @@ class DataStoreManager(private val context: Context) {
         val HIGH_SCORE_BUBBLE_KING = intPreferencesKey("high_score_bubble_king")
         val HIGH_SCORE_PERFECT_STREAK = intPreferencesKey("high_score_perfect_streak")
         val HIGH_SCORE_TIME_MASTER = intPreferencesKey("high_score_time_master")
+        val HIGH_SCORE_SPEED_DEMON = intPreferencesKey("high_score_speed_demon")
+        val HIGH_SCORE_ACCURACY_KING = intPreferencesKey("high_score_accuracy_king")
+        val HIGH_SCORE_ENDURANCE_MASTER = intPreferencesKey("high_score_endurance_master")
 
         val COINS_KEY = intPreferencesKey("coins")
         val LUX_KEY = intPreferencesKey("lux")
@@ -97,6 +100,13 @@ class DataStoreManager(private val context: Context) {
         val PURCHASE_BG_9 = intPreferencesKey("purchase_bg_9")
         val PURCHASE_BG_10 = intPreferencesKey("purchase_bg_10")
         val PURCHASE_BG_11 = intPreferencesKey("purchase_bg_11")
+        val PURCHASE_BG_12 = intPreferencesKey("purchase_bg_12")
+        val PURCHASE_BG_13 = intPreferencesKey("purchase_bg_13")
+        val PURCHASE_BG_14 = intPreferencesKey("purchase_bg_14")
+        val PURCHASE_BG_15 = intPreferencesKey("purchase_bg_15")
+        val PURCHASE_BG_16 = intPreferencesKey("purchase_bg_16")
+        val PURCHASE_BG_17 = intPreferencesKey("purchase_bg_17")
+        val PURCHASE_BG_18 = intPreferencesKey("purchase_bg_18")
         val EQUIPPED_BG = intPreferencesKey("equipped_bg")
 
         val PURCHASE_BUBBLE_1 = intPreferencesKey("purchase_bubble_1")
@@ -141,6 +151,12 @@ class DataStoreManager(private val context: Context) {
         val PURCHASE_MAINMENU_8 = intPreferencesKey("purchase_mainmenu_8")
         val PURCHASE_MAINMENU_9 = intPreferencesKey("purchase_mainmenu_9")
         val PURCHASE_MAINMENU_10 = intPreferencesKey("purchase_mainmenu_10")
+        val PURCHASE_MAINMENU_11 = intPreferencesKey("purchase_mainmenu_11")
+        val PURCHASE_MAINMENU_12 = intPreferencesKey("purchase_mainmenu_12")
+        val PURCHASE_MAINMENU_13 = intPreferencesKey("purchase_mainmenu_13")
+        val PURCHASE_MAINMENU_14 = intPreferencesKey("purchase_mainmenu_14")
+        val PURCHASE_MAINMENU_15 = intPreferencesKey("purchase_mainmenu_15")
+        val PURCHASE_MAINMENU_16 = intPreferencesKey("purchase_mainmenu_16")
         val EQUIPPED_MAINMENU = intPreferencesKey("equipped_mainmenu")
 
         val PROFILE_DRAWABLE = intPreferencesKey("profile_drawable")
@@ -261,6 +277,27 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { prefs -> prefs[HIGH_SCORE_TIME_MASTER] = score }
     }
 
+    fun highScoreSpeedDemonFlow(): Flow<Int> =
+        context.dataStore.data.map { prefs -> prefs[HIGH_SCORE_SPEED_DEMON] ?: 0 }
+
+    suspend fun saveHighScoreSpeedDemon(score: Int) {
+        context.dataStore.edit { prefs -> prefs[HIGH_SCORE_SPEED_DEMON] = score }
+    }
+
+    fun highScoreAccuracyKingFlow(): Flow<Int> =
+        context.dataStore.data.map { prefs -> prefs[HIGH_SCORE_ACCURACY_KING] ?: 0 }
+
+    suspend fun saveHighScoreAccuracyKing(score: Int) {
+        context.dataStore.edit { prefs -> prefs[HIGH_SCORE_ACCURACY_KING] = score }
+    }
+
+    fun highScoreEnduranceMasterFlow(): Flow<Int> =
+        context.dataStore.data.map { prefs -> prefs[HIGH_SCORE_ENDURANCE_MASTER] ?: 0 }
+
+    suspend fun saveHighScoreEnduranceMaster(score: Int) {
+        context.dataStore.edit { prefs -> prefs[HIGH_SCORE_ENDURANCE_MASTER] = score }
+    }
+
     // ==================== COINS ====================
 
     fun coinsFlow(): Flow<Int> =
@@ -323,7 +360,9 @@ class DataStoreManager(private val context: Context) {
         1 -> PURCHASE_BG_1; 2 -> PURCHASE_BG_2; 3 -> PURCHASE_BG_3
         4 -> PURCHASE_BG_4; 5 -> PURCHASE_BG_5; 6 -> PURCHASE_BG_6
         7 -> PURCHASE_BG_7; 8 -> PURCHASE_BG_8; 9 -> PURCHASE_BG_9
-        10 -> PURCHASE_BG_10; 11 -> PURCHASE_BG_11
+        10 -> PURCHASE_BG_10; 11 -> PURCHASE_BG_11; 12 -> PURCHASE_BG_12
+        13 -> PURCHASE_BG_13; 14 -> PURCHASE_BG_14; 15 -> PURCHASE_BG_15
+        16 -> PURCHASE_BG_16; 17 -> PURCHASE_BG_17; 18 -> PURCHASE_BG_18
         else -> PURCHASE_BG_1
     }
 
@@ -485,7 +524,9 @@ class DataStoreManager(private val context: Context) {
         1 -> PURCHASE_MAINMENU_1; 2 -> PURCHASE_MAINMENU_2; 3 -> PURCHASE_MAINMENU_3
         4 -> PURCHASE_MAINMENU_4; 5 -> PURCHASE_MAINMENU_5; 6 -> PURCHASE_MAINMENU_6
         7 -> PURCHASE_MAINMENU_7; 8 -> PURCHASE_MAINMENU_8; 9 -> PURCHASE_MAINMENU_9
-        10 -> PURCHASE_MAINMENU_10
+        10 -> PURCHASE_MAINMENU_10; 11 -> PURCHASE_MAINMENU_11; 12 -> PURCHASE_MAINMENU_12
+        13 -> PURCHASE_MAINMENU_13; 14 -> PURCHASE_MAINMENU_14; 15 -> PURCHASE_MAINMENU_15
+        16 -> PURCHASE_MAINMENU_16
         else -> PURCHASE_MAINMENU_1
     }
 
@@ -818,32 +859,134 @@ class DataStoreManager(private val context: Context) {
                 return@edit
             }
             prefs[key] = 1
-            when (pct) {
-                30 -> {
-                    val current = prefs[COINS_KEY] ?: 0
-                    prefs[COINS_KEY] = current + 300
-                }
-                60 -> {
-                    val current = prefs[COINS_KEY] ?:  0
-                    prefs[COINS_KEY] = current + 700
-                }
-                100 -> {
-                    when (challengeId) {
-                        1 -> {
-                            prefs[PURCHASE_BG_6] = 1
-                            prefs[EQUIPPED_BG] = 6
+            
+            // New reward logic based on problem statement
+            when (challengeId) {
+                1 -> { // Bubble King
+                    when (pct) {
+                        30 -> {
+                            // Unlock Fire Bubble (ID 11)
+                            prefs[PURCHASE_BUBBLE_11] = 1
+                            prefs[EQUIPPED_BUBBLE] = 11
                         }
-                        2 -> {
-                            prefs[PURCHASE_MAINMENU_5] = 1
-                            prefs[EQUIPPED_MAINMENU] = 5
+                        60 -> {
+                            // Unlock Starfield Background (ID 12)
+                            prefs[PURCHASE_BG_12] = 1
+                            prefs[EQUIPPED_BG] = 12
                         }
-                        3 -> {
-                            prefs[PURCHASE_BUBBLE_5] = 1
-                            prefs[EQUIPPED_BUBBLE] = 5
+                        100 -> {
+                            // Unlock Neon Pulse MainMenu (ID 11)
+                            prefs[PURCHASE_MAINMENU_11] = 1
+                            prefs[EQUIPPED_MAINMENU] = 11
+                            val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
+                            prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
                         }
                     }
-                    val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
-                    prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
+                }
+                2 -> { // Perfect Streak
+                    when (pct) {
+                        30 -> {
+                            // Unlock Ice Bubble (ID 12)
+                            prefs[PURCHASE_BUBBLE_12] = 1
+                            prefs[EQUIPPED_BUBBLE] = 12
+                        }
+                        60 -> {
+                            // Unlock Ocean Waves Background (ID 13)
+                            prefs[PURCHASE_BG_13] = 1
+                            prefs[EQUIPPED_BG] = 13
+                        }
+                        100 -> {
+                            // Unlock Geometric Waves MainMenu (ID 12)
+                            prefs[PURCHASE_MAINMENU_12] = 1
+                            prefs[EQUIPPED_MAINMENU] = 12
+                            val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
+                            prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
+                        }
+                    }
+                }
+                3 -> { // Time Master
+                    when (pct) {
+                        30 -> {
+                            // Unlock Electric Bubble (ID 13)
+                            prefs[PURCHASE_BUBBLE_13] = 1
+                            prefs[EQUIPPED_BUBBLE] = 13
+                        }
+                        60 -> {
+                            // Unlock Aurora Borealis Background (ID 15)
+                            prefs[PURCHASE_BG_15] = 1
+                            prefs[EQUIPPED_BG] = 15
+                        }
+                        100 -> {
+                            // Unlock Particle Field MainMenu (ID 13)
+                            prefs[PURCHASE_MAINMENU_13] = 1
+                            prefs[EQUIPPED_MAINMENU] = 13
+                            val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
+                            prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
+                        }
+                    }
+                }
+                4 -> { // Speed Demon
+                    when (pct) {
+                        30 -> {
+                            // Unlock Nature Bubble (ID 14)
+                            prefs[PURCHASE_BUBBLE_14] = 1
+                            prefs[EQUIPPED_BUBBLE] = 14
+                        }
+                        60 -> {
+                            // Unlock Volcanic Background (ID 16)
+                            prefs[PURCHASE_BG_16] = 1
+                            prefs[EQUIPPED_BG] = 16
+                        }
+                        100 -> {
+                            // Unlock Gradient Mesh MainMenu (ID 14)
+                            prefs[PURCHASE_MAINMENU_14] = 1
+                            prefs[EQUIPPED_MAINMENU] = 14
+                            val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
+                            prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
+                        }
+                    }
+                }
+                5 -> { // Accuracy King
+                    when (pct) {
+                        30 -> {
+                            // Unlock Galaxy Bubble (ID 15)
+                            prefs[PURCHASE_BUBBLE_15] = 1
+                            prefs[EQUIPPED_BUBBLE] = 15
+                        }
+                        60 -> {
+                            // Unlock Cyberpunk City Background (ID 17)
+                            prefs[PURCHASE_BG_17] = 1
+                            prefs[EQUIPPED_BG] = 17
+                        }
+                        100 -> {
+                            // Unlock Matrix Rain MainMenu (ID 15)
+                            prefs[PURCHASE_MAINMENU_15] = 1
+                            prefs[EQUIPPED_MAINMENU] = 15
+                            val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
+                            prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
+                        }
+                    }
+                }
+                6 -> { // Endurance Master
+                    when (pct) {
+                        30 -> {
+                            // Unlock Lava Bubble (ID 16)
+                            prefs[PURCHASE_BUBBLE_16] = 1
+                            prefs[EQUIPPED_BUBBLE] = 16
+                        }
+                        60 -> {
+                            // Unlock Underwater Background (ID 18)
+                            prefs[PURCHASE_BG_18] = 1
+                            prefs[EQUIPPED_BG] = 18
+                        }
+                        100 -> {
+                            // Unlock Cosmic Nebula MainMenu (ID 16)
+                            prefs[PURCHASE_MAINMENU_16] = 1
+                            prefs[EQUIPPED_MAINMENU] = 16
+                            val currentCount = prefs[CHALLENGES_COMPLETED_COUNT] ?: 0
+                            prefs[CHALLENGES_COMPLETED_COUNT] = currentCount + 1
+                        }
+                    }
                 }
             }
             success = true
